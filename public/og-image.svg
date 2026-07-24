@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#16213e"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#f97316"/>
+      <stop offset="100%" style="stop-color:#fb923c"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="630" fill="url(#bg)"/>
+  <rect x="0" y="0" width="1200" height="4" fill="url(#accent)"/>
+  <text x="600" y="200" font-family="Arial, sans-serif" font-size="72" font-weight="bold" fill="#ffffff" text-anchor="middle">PhytoFlex Gold</text>
+  <text x="600" y="280" font-family="Arial, sans-serif" font-size="32" fill="#f97316" text-anchor="middle" font-weight="bold">Clinical-Grade Joint Supplement</text>
+  <text x="600" y="340" font-family="Arial, sans-serif" font-size="24" fill="#a0aec0" text-anchor="middle">12 High-Altitude Botanical Extracts | 94% Bio-Available | 500ml</text>
+  <rect x="400" y="400" width="400" height="50" rx="25" fill="url(#accent)"/>
+  <text x="600" y="432" font-family="Arial, sans-serif" font-size="20" font-weight="bold" fill="#1a1a2e" text-anchor="middle">phytoflexgold.com</text>
+  <text x="600" y="550" font-family="Arial, sans-serif" font-size="16" fill="#718096" text-anchor="middle">GMP Certified | ISO 9001 | FDA Registered | AYUSH Approved</text>
+</svg>
