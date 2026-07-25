@@ -1,24 +1,48 @@
 import type { Metadata } from "next"
+import { SITE_URL, buildBreadcrumbSchema } from "@/lib/seo"
 
 export const metadata: Metadata = {
   title: "Terms of Service | PhytoFlex Gold",
   description:
     "Read the PhytoFlex Gold terms of service. Understand the terms governing your use of our website and purchase of our joint health supplement.",
   alternates: {
-    canonical: "https://phytoflexgold.com/terms",
+    canonical: `${SITE_URL}/terms`,
   },
   openGraph: {
     title: "Terms of Service | PhytoFlex Gold",
     description:
       "Terms and conditions governing your use of the PhytoFlex Gold website.",
-    url: "https://phytoflexgold.com/terms",
+    url: `${SITE_URL}/terms`,
     type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.svg`,
+        width: 1200,
+        height: 630,
+        alt: "PhytoFlex Gold Terms of Service",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Terms of Service | PhytoFlex Gold",
+    description: "Terms and conditions governing your use of the PhytoFlex Gold website.",
+    images: [`${SITE_URL}/og-image.svg`],
   },
 }
 
 export default function TermsPage() {
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home", url: SITE_URL },
+    { name: "Terms of Service", url: `${SITE_URL}/terms` },
+  ])
+
   return (
     <main className="bg-background min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <article className="max-w-3xl mx-auto px-margin-mobile md:px-gutter-md py-20">
         <h1 className="text-headline-lg font-bold text-on-surface mb-8">
           Terms of Service

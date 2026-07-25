@@ -1,24 +1,48 @@
 import type { Metadata } from "next"
+import { SITE_URL, buildBreadcrumbSchema } from "@/lib/seo"
 
 export const metadata: Metadata = {
   title: "Medical Disclaimer | PhytoFlex Gold",
   description:
     "Read the PhytoFlex Gold medical disclaimer. PhytoFlex Gold is a dietary supplement and is not intended to diagnose, treat, cure, or prevent any disease.",
   alternates: {
-    canonical: "https://phytoflexgold.com/disclaimer",
+    canonical: `${SITE_URL}/disclaimer`,
   },
   openGraph: {
     title: "Medical Disclaimer | PhytoFlex Gold",
     description:
       "Important medical disclaimer for PhytoFlex Gold dietary supplement.",
-    url: "https://phytoflexgold.com/disclaimer",
+    url: `${SITE_URL}/disclaimer`,
     type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.svg`,
+        width: 1200,
+        height: 630,
+        alt: "PhytoFlex Gold Medical Disclaimer",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Medical Disclaimer | PhytoFlex Gold",
+    description: "Important medical disclaimer for PhytoFlex Gold dietary supplement.",
+    images: [`${SITE_URL}/og-image.svg`],
   },
 }
 
 export default function DisclaimerPage() {
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home", url: SITE_URL },
+    { name: "Disclaimer", url: `${SITE_URL}/disclaimer` },
+  ])
+
   return (
     <main className="bg-background min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <article className="max-w-3xl mx-auto px-margin-mobile md:px-gutter-md py-20">
         <h1 className="text-headline-lg font-bold text-on-surface mb-8">
           Medical Disclaimer

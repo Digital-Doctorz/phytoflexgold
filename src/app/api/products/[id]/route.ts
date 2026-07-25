@@ -31,12 +31,53 @@ export async function PATCH(
   try {
     const { id } = await params
     const body = await request.json()
+    const { expectedVersion, ...updateData } = body
     const db = getAdminDb()
-    await db.collection("products").doc(id).update({
-      ...body,
+
+    const docRef = db.collection("products").doc(id)
+    const doc = await docRef.get()
+
+    if (!doc.exists) {
+      return NextResponse.json({ error: "Product not found" }, { status: 404 })
+    }
+
+    const currentData = doc.data()!
+    const currentVersion = currentData.version || 0
+
+    if (expectedVersion !== undefined && expectedVersion !== currentVersion) {
+      return NextResponse.json(
+        {
+          error: "conflict",
+          message: "This product was modified by another session. Please refresh to see the latest version.",
+          currentVersion,
+          serverData: serializeFirestoreData(currentData),
+        },
+        { status: 409 }
+      )
+    }
+
+    const previousSnapshot = serializeFirestoreData(currentData)
+    const changedFields = Object.keys(updateData).filter(
+      (key) => JSON.stringify(updateData[key]) !== JSON.stringify(previousSnapshot[key])
+    )
+
+    await docRef.update({
+      ...updateData,
+      version: currentVersion + 1,
       updatedAt: new Date(),
     })
-    return NextResponse.json({ success: true })
+
+    await db.collection("revisions").add({
+      entityType: "product",
+      entityId: id,
+      action: "update",
+      snapshot: previousSnapshot,
+      changedFields,
+      editedBy: request.headers.get("x-user-email") || "admin",
+      createdAt: new Date(),
+    })
+
+    return NextResponse.json({ success: true, version: currentVersion + 1 })
   } catch (error) {
     console.error("Error updating product:", error)
     return NextResponse.json({ error: "Failed to update product" }, { status: 500 })
@@ -53,6 +94,19 @@ export async function DELETE(
   try {
     const { id } = await params
     const db = getAdminDb()
+
+    const doc = await db.collection("products").doc(id).get()
+    if (doc.exists) {
+      await db.collection("revisions").add({
+        entityType: "product",
+        entityId: id,
+        action: "delete",
+        snapshot: serializeFirestoreData(doc.data()!),
+        editedBy: _request.headers.get("x-user-email") || "admin",
+        createdAt: new Date(),
+      })
+    }
+
     await db.collection("products").doc(id).delete()
     return NextResponse.json({ success: true })
   } catch (error) {

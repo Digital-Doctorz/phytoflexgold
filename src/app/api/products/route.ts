@@ -22,12 +22,24 @@ export async function POST(request: NextRequest) {
   try {
     const db = getAdminDb()
     const body = await request.json()
+    const now = new Date()
     const docRef = await db.collection("products").add({
       ...body,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      version: 1,
+      createdAt: now,
+      updatedAt: now,
     })
-    return NextResponse.json({ id: docRef.id, ...body }, { status: 201 })
+
+    await db.collection("revisions").add({
+      entityType: "product",
+      entityId: docRef.id,
+      action: "create",
+      snapshot: { ...body, id: docRef.id },
+      editedBy: request.headers.get("x-user-email") || "admin",
+      createdAt: now,
+    })
+
+    return NextResponse.json({ id: docRef.id, ...body, version: 1 }, { status: 201 })
   } catch (error) {
     console.error("Error creating product:", error)
     return NextResponse.json({ error: "Failed to create product" }, { status: 500 })

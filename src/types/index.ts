@@ -19,6 +19,18 @@ export interface Product {
   tiers: PricingTier[]
   createdAt?: Date
   updatedAt?: Date
+  version?: number
+}
+
+export interface Revision {
+  id?: string
+  entityType: "product" | "settings"
+  entityId: string
+  action: "create" | "update" | "delete"
+  snapshot: Record<string, unknown>
+  changedFields?: string[]
+  editedBy?: string
+  createdAt: Date
 }
 
 export type OrderStatus = "PENDING" | "PAID" | "SHIPPED" | "DELIVERED" | "CANCELLED"
@@ -73,4 +85,15 @@ export interface DashboardStats {
   productCount: number
   recentOrders: Order[]
   salesByDay: { date: string; sales: number }[]
+}
+
+export interface StoreSettings {
+  storeName: string
+  storeEmail: string
+  storePhone: string
+  shippingFee: string
+  freeShippingThreshold: string
+  taxRate: string
+  updatedAt?: Date
+  version?: number
 }

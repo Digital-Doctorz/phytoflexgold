@@ -1,24 +1,48 @@
 import type { Metadata } from "next"
+import { SITE_URL, buildBreadcrumbSchema } from "@/lib/seo"
 
 export const metadata: Metadata = {
   title: "Privacy Policy | PhytoFlex Gold",
   description:
     "Read the PhytoFlex Gold privacy policy. Learn how Liquid Health Inc. collects, uses, and protects your personal information when you purchase our joint supplement.",
   alternates: {
-    canonical: "https://phytoflexgold.com/privacy",
+    canonical: `${SITE_URL}/privacy`,
   },
   openGraph: {
     title: "Privacy Policy | PhytoFlex Gold",
     description:
       "Learn how Liquid Health Inc. protects your personal information.",
-    url: "https://phytoflexgold.com/privacy",
+    url: `${SITE_URL}/privacy`,
     type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.svg`,
+        width: 1200,
+        height: 630,
+        alt: "PhytoFlex Gold Privacy Policy",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Privacy Policy | PhytoFlex Gold",
+    description: "Learn how Liquid Health Inc. protects your personal information.",
+    images: [`${SITE_URL}/og-image.svg`],
   },
 }
 
 export default function PrivacyPage() {
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home", url: SITE_URL },
+    { name: "Privacy Policy", url: `${SITE_URL}/privacy` },
+  ])
+
   return (
     <main className="bg-background min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <article className="max-w-3xl mx-auto px-margin-mobile md:px-gutter-md py-20">
         <h1 className="text-headline-lg font-bold text-on-surface mb-8">
           Privacy Policy

@@ -1,10 +1,34 @@
 import Link from "next/link"
 import type { Metadata } from "next"
+import { SITE_URL, buildBreadcrumbSchema } from "@/lib/seo"
 
 export const metadata: Metadata = {
   title: "Blog | PhytoFlex Gold",
   description:
     "Expert articles on joint health, botanical supplements, turmeric benefits, and natural wellness protocols from PhytoFlex Gold.",
+  alternates: {
+    canonical: `${SITE_URL}/blog`,
+  },
+  openGraph: {
+    title: "Blog | PhytoFlex Gold",
+    description: "Expert articles on joint health, botanical supplements, and natural wellness protocols.",
+    url: `${SITE_URL}/blog`,
+    type: "website",
+    images: [
+      {
+        url: `${SITE_URL}/og-image.svg`,
+        width: 1200,
+        height: 630,
+        alt: "PhytoFlex Gold Blog",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Blog | PhytoFlex Gold",
+    description: "Expert articles on joint health, botanical supplements, and natural wellness protocols.",
+    images: [`${SITE_URL}/og-image.svg`],
+  },
 }
 
 const posts = [
@@ -47,8 +71,17 @@ const posts = [
 ]
 
 export default function BlogIndex() {
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: "Home", url: SITE_URL },
+    { name: "Blog", url: `${SITE_URL}/blog` },
+  ])
+
   return (
     <main className="bg-background min-h-screen">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
       <section className="max-w-4xl mx-auto px-margin-mobile md:px-gutter-md py-20">
         <header className="mb-12">
           <h1 className="text-headline-lg font-bold text-on-surface mb-4">

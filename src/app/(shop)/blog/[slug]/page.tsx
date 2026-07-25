@@ -2,6 +2,7 @@ import type { Metadata } from "next"
 import Link from "next/link"
 import { notFound } from "next/navigation"
 import { getPost, getAllSlugs } from "./data"
+import { SITE_URL, buildArticleSchema, buildBreadcrumbSchema } from "@/lib/seo"
 
 type Props = {
   params: Promise<{ slug: string }>
@@ -20,21 +21,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     title: `${post.title} | PhytoFlex Gold Blog`,
     description: post.description,
     alternates: {
-      canonical: `https://phytoflexgold.com/blog/${post.slug}`,
+      canonical: `${SITE_URL}/blog/${post.slug}`,
     },
     openGraph: {
       title: post.title,
       description: post.description,
-      url: `https://phytoflexgold.com/blog/${post.slug}`,
+      url: `${SITE_URL}/blog/${post.slug}`,
       type: "article",
       publishedTime: post.date,
       authors: ["PhytoFlex Gold"],
       tags: [post.category, "joint health", "supplements"],
+      images: [
+        {
+          url: `${SITE_URL}/og-image.svg`,
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ],
     },
     twitter: {
       card: "summary_large_image",
       title: post.title,
       description: post.description,
+      images: [`${SITE_URL}/og-image.svg`],
     },
   }
 }
@@ -44,28 +54,6 @@ export default async function BlogArticle({ params }: Props) {
   const post = getPost(slug)
   if (!post) notFound()
 
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Article",
-    headline: post.title,
-    description: post.description,
-    datePublished: post.date,
-    author: {
-      "@type": "Organization",
-      name: "PhytoFlex Gold",
-      url: "https://phytoflexgold.com",
-    },
-    publisher: {
-      "@type": "Organization",
-      name: "PhytoFlex Gold",
-      url: "https://phytoflexgold.com",
-    },
-    mainEntityOfPage: {
-      "@type": "WebPage",
-      "@id": `https://phytoflexgold.com/blog/${post.slug}`,
-    },
-  }
-
   const paragraphs = post.content
     .split("\n\n")
     .filter((p) => p.trim())
@@ -74,7 +62,29 @@ export default async function BlogArticle({ params }: Props) {
     <main className="bg-background min-h-screen">
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            buildArticleSchema({
+              title: post.title,
+              description: post.description,
+              datePublished: post.date,
+              slug: post.slug,
+              category: post.category,
+            })
+          ),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            buildBreadcrumbSchema([
+              { name: "Home", url: SITE_URL },
+              { name: "Blog", url: `${SITE_URL}/blog` },
+              { name: post.title, url: `${SITE_URL}/blog/${post.slug}` },
+            ])
+          ),
+        }}
       />
 
       <article className="max-w-3xl mx-auto px-margin-mobile md:px-gutter-md py-20">

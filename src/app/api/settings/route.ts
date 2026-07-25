@@ -22,7 +22,7 @@ export async function GET(request: NextRequest) {
     const db = getAdminDb()
     const doc = await db.collection("config").doc("store").get()
     if (!doc.exists) {
-      return NextResponse.json(DEFAULT_SETTINGS)
+      return NextResponse.json({ ...DEFAULT_SETTINGS, version: 0 })
     }
     return NextResponse.json(serializeFirestoreData(doc.data()!))
   } catch (error) {
@@ -37,12 +37,48 @@ export async function PATCH(request: NextRequest) {
 
   try {
     const body = await request.json()
+    const { expectedVersion, ...updateData } = body
     const db = getAdminDb()
-    await db.collection("config").doc("store").set(
-      { ...body, updatedAt: new Date() },
+
+    const docRef = db.collection("config").doc(SETTINGS_DOC)
+    const doc = await docRef.get()
+
+    const currentData = doc.exists ? doc.data()! : {}
+    const currentVersion = currentData.version || 0
+
+    if (expectedVersion !== undefined && expectedVersion !== currentVersion) {
+      return NextResponse.json(
+        {
+          error: "conflict",
+          message: "Settings were modified by another session. Please refresh to see the latest version.",
+          currentVersion,
+          serverData: serializeFirestoreData(currentData),
+        },
+        { status: 409 }
+      )
+    }
+
+    const previousSnapshot = serializeFirestoreData(currentData)
+    const changedFields = Object.keys(updateData).filter(
+      (key) => JSON.stringify(updateData[key]) !== JSON.stringify(previousSnapshot[key])
+    )
+
+    await docRef.set(
+      { ...updateData, version: currentVersion + 1, updatedAt: new Date() },
       { merge: true }
     )
-    return NextResponse.json({ success: true })
+
+    await db.collection("revisions").add({
+      entityType: "settings",
+      entityId: SETTINGS_DOC,
+      action: "update",
+      snapshot: previousSnapshot,
+      changedFields,
+      editedBy: request.headers.get("x-user-email") || "admin",
+      createdAt: new Date(),
+    })
+
+    return NextResponse.json({ success: true, version: currentVersion + 1 })
   } catch (error) {
     console.error("Error updating settings:", error)
     return NextResponse.json({ error: "Failed to update settings" }, { status: 500 })
