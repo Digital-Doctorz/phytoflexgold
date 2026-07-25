@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { formatPrice, formatDate } from "@/lib/utils"
+import { authFetch } from "@/lib/auth-client"
 import { DollarSign, ShoppingCart, Users, Package } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts"
@@ -25,9 +26,9 @@ export default function DashboardPage() {
     async function fetchData() {
       try {
         const [ordersRes, productsRes, customersRes] = await Promise.all([
-          fetch("/api/orders"),
-          fetch("/api/products"),
-          fetch("/api/customers"),
+          authFetch("/api/orders"),
+          authFetch("/api/products"),
+          authFetch("/api/customers"),
         ])
         const orders = await ordersRes.json()
         const products = await productsRes.json()

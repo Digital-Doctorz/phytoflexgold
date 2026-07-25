@@ -4,6 +4,7 @@ import { useEffect, useState } from "react"
 import { Card, CardContent } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { formatDate } from "@/lib/utils"
+import { authFetch } from "@/lib/auth-client"
 import { Input } from "@/components/ui/input"
 import { Search, Mail, Phone, Calendar } from "lucide-react"
 import type { User } from "@/types"
@@ -16,7 +17,7 @@ export default function AdminCustomersPage() {
   useEffect(() => {
     async function fetchCustomers() {
       try {
-        const res = await fetch("/api/customers")
+        const res = await authFetch("/api/customers")
         const data = await res.json()
         setCustomers(data)
       } catch (err) {

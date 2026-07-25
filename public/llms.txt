@@ -57,12 +57,12 @@ Unlike standard glucosamine supplements that only provide building blocks, Phyto
 - 3 Month Supply (9 bottles): Rs. 5,900 (Best Value - 35% Off)
 
 ## Contact
-- Website: https://phytoflexgold.com
+- Website: https://phytoflexgold.vercel.app
 - Manufacturer: Liquid Health Inc.
 
 ## See Also
-- https://phytoflexgold.com/#science - The Molecular Science
-- https://phytoflexgold.com/#ingredients - Curated Formulation
-- https://phytoflexgold.com/#timeline - Recovery Timeline
-- https://phytoflexgold.com/#pricing - Pricing Plans
-- https://phytoflexgold.com/#faq - Clinical Clarifications
+- https://phytoflexgold.vercel.app/#science - The Molecular Science
+- https://phytoflexgold.vercel.app/#ingredients - Curated Formulation
+- https://phytoflexgold.vercel.app/#timeline - Recovery Timeline
+- https://phytoflexgold.vercel.app/#pricing - Pricing Plans
+- https://phytoflexgold.vercel.app/#faq - Clinical Clarifications

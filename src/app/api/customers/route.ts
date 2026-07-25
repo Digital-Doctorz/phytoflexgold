@@ -1,14 +1,19 @@
 import { NextResponse } from "next/server"
 import { getAdminDb, serializeFirestoreData } from "@/lib/firebase-admin"
+import { requireAdmin } from "@/lib/auth"
+import { NextRequest } from "next/server"
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const authResult = await requireAdmin(request)
+  if ("error" in authResult) return authResult.error
+
   try {
     const db = getAdminDb()
     const snapshot = await db.collection("users").orderBy("createdAt", "desc").get()
     const users = snapshot.docs.map((doc) => {
       const data = serializeFirestoreData(doc.data())
       const { passwordHash, ...safeData } = data
-      return { id: doc.id, ...safeData }
+      return { id: doc.id, uid: doc.id, ...safeData }
     })
     return NextResponse.json(users)
   } catch (error) {

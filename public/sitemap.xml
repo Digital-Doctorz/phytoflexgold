@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
-    <loc>https://phytoflexgold.com</loc>
+    <loc>https://phytoflexgold.vercel.app</loc>
     <lastmod>2026-07-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
@@ -12,61 +12,61 @@
     </image:image>
   </url>
   <url>
-    <loc>https://phytoflexgold.com/privacy</loc>
+    <loc>https://phytoflexgold.vercel.app/privacy</loc>
     <lastmod>2026-07-24</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://phytoflexgold.com/terms</loc>
+    <loc>https://phytoflexgold.vercel.app/terms</loc>
     <lastmod>2026-07-24</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://phytoflexgold.com/disclaimer</loc>
+    <loc>https://phytoflexgold.vercel.app/disclaimer</loc>
     <lastmod>2026-07-24</lastmod>
     <changefreq>yearly</changefreq>
     <priority>0.3</priority>
   </url>
   <url>
-    <loc>https://phytoflexgold.com/contact</loc>
+    <loc>https://phytoflexgold.vercel.app/contact</loc>
     <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://phytoflexgold.com/shipping</loc>
+    <loc>https://phytoflexgold.vercel.app/shipping</loc>
     <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.5</priority>
   </url>
   <url>
-    <loc>https://phytoflexgold.com/blog</loc>
+    <loc>https://phytoflexgold.vercel.app/blog</loc>
     <lastmod>2026-07-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://phytoflexgold.com/blog/turmeric-curcumin-joint-health</loc>
+    <loc>https://phytoflexgold.vercel.app/blog/turmeric-curcumin-joint-health</loc>
     <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://phytoflexgold.com/blog/boswellia-serrata-inflammation</loc>
+    <loc>https://phytoflexgold.vercel.app/blog/boswellia-serrata-inflammation</loc>
     <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://phytoflexgold.com/blog/liquid-supplements-absorption</loc>
+    <loc>https://phytoflexgold.vercel.app/blog/liquid-supplements-absorption</loc>
     <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
   </url>
   <url>
-    <loc>https://phytoflexgold.com/blog/joint-health-exercise-recovery</loc>
+    <loc>https://phytoflexgold.vercel.app/blog/joint-health-exercise-recovery</loc>
     <lastmod>2026-07-24</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>

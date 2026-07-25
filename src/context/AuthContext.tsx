@@ -2,7 +2,7 @@
 
 import { createContext, useContext, useEffect, useState, useCallback } from "react"
 import { auth } from "@/lib/firebase-client"
-import { onAuthStateChanged, signInWithCustomToken, signOut as firebaseSignOut } from "firebase/auth"
+import { onAuthStateChanged, signInWithCustomToken, signOut as firebaseSignOut, type User as FirebaseUser } from "firebase/auth"
 import type { User } from "@/types"
 
 interface AuthContextType {
@@ -27,9 +27,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [userProfile, setUserProfile] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const fetchProfile = useCallback(async (uid: string) => {
+  const fetchProfile = useCallback(async (firebaseUser: FirebaseUser) => {
     try {
-      const res = await fetch(`/api/auth/me?uid=${uid}`)
+      const idToken = await firebaseUser.getIdToken()
+      const res = await fetch("/api/auth/me", {
+        headers: { Authorization: `Bearer ${idToken}` },
+      })
       if (res.ok) {
         const data = await res.json()
         setUserProfile(data)
@@ -44,7 +47,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (firebaseUser) {
-        await fetchProfile(firebaseUser.uid)
+        await fetchProfile(firebaseUser)
       } else {
         setUserProfile(null)
       }

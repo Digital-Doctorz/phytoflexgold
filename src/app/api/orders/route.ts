@@ -1,7 +1,12 @@
 import { NextResponse } from "next/server"
 import { getAdminDb, serializeFirestoreData } from "@/lib/firebase-admin"
+import { requireAdmin } from "@/lib/auth"
+import { NextRequest } from "next/server"
 
-export async function GET(request: Request) {
+export async function GET(request: NextRequest) {
+  const authResult = await requireAdmin(request)
+  if ("error" in authResult) return authResult.error
+
   try {
     const { searchParams } = new URL(request.url)
     const status = searchParams.get("status")
@@ -20,7 +25,7 @@ export async function GET(request: Request) {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   try {
     const body = await request.json()
     const db = getAdminDb()

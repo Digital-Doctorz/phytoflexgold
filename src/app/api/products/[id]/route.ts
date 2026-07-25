@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server"
 import { getAdminDb, serializeFirestoreData } from "@/lib/firebase-admin"
+import { requireAdmin } from "@/lib/auth"
+import { NextRequest } from "next/server"
 
 export async function GET(
-  _request: Request,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
@@ -20,9 +22,12 @@ export async function GET(
 }
 
 export async function PATCH(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authResult = await requireAdmin(request)
+  if ("error" in authResult) return authResult.error
+
   try {
     const { id } = await params
     const body = await request.json()
@@ -39,9 +44,12 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  _request: Request,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authResult = await requireAdmin(_request)
+  if ("error" in authResult) return authResult.error
+
   try {
     const { id } = await params
     const db = getAdminDb()

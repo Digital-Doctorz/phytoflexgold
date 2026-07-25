@@ -58,6 +58,7 @@ export interface Order {
 
 export interface User {
   id: string
+  uid: string
   email: string
   name?: string
   phone?: string

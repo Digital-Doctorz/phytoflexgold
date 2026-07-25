@@ -9,7 +9,7 @@ const hankenGrotesk = Hanken_Grotesk({
   variable: "--font-hanken-grotesk",
 })
 
-const siteUrl = "https://phytoflexgold.com"
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://phytoflexgold.vercel.app"
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

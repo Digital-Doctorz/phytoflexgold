@@ -1,10 +1,11 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { authFetch } from "@/lib/auth-client"
 
 export default function AdminSettingsPage() {
   const [settings, setSettings] = useState({
@@ -16,11 +17,42 @@ export default function AdminSettingsPage() {
     taxRate: "0",
   })
   const [saved, setSaved] = useState(false)
+  const [loading, setLoading] = useState(true)
 
-  const handleSave = (e: React.FormEvent) => {
+  useEffect(() => {
+    async function fetchSettings() {
+      try {
+        const res = await authFetch("/api/settings")
+        if (res.ok) {
+          const data = await res.json()
+          setSettings(data)
+        }
+      } catch (err) {
+        console.error("Failed to load settings:", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchSettings()
+  }, [])
+
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault()
-    setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
+    try {
+      await authFetch("/api/settings", {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(settings),
+      })
+      setSaved(true)
+      setTimeout(() => setSaved(false), 2000)
+    } catch (err) {
+      console.error("Failed to save settings:", err)
+    }
+  }
+
+  if (loading) {
+    return <div className="text-center py-20 text-on-surface-variant">Loading...</div>
   }
 
   return (

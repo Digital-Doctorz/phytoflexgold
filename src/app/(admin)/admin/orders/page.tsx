@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Select } from "@/components/ui/select"
 import { formatPrice, formatDate } from "@/lib/utils"
+import { authFetch } from "@/lib/auth-client"
 import { Download, Search } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import type { Order, OrderStatus } from "@/types"
@@ -28,7 +29,7 @@ export default function AdminOrdersPage() {
     try {
       const params = new URLSearchParams()
       if (statusFilter) params.set("status", statusFilter)
-      const res = await fetch(`/api/orders?${params}`)
+      const res = await authFetch(`/api/orders?${params}`)
       const data = await res.json()
       setOrders(data)
     } catch (err) {
@@ -41,7 +42,7 @@ export default function AdminOrdersPage() {
   useEffect(() => { fetchOrders() }, [statusFilter])
 
   const updateStatus = async (id: string, status: OrderStatus) => {
-    await fetch(`/api/orders/${id}`, {
+    await authFetch(`/api/orders/${id}`, {
       method: "PATCH",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ status }),

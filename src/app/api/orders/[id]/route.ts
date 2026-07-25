@@ -1,10 +1,15 @@
 import { NextResponse } from "next/server"
 import { getAdminDb } from "@/lib/firebase-admin"
+import { requireAdmin } from "@/lib/auth"
+import { NextRequest } from "next/server"
 
 export async function PATCH(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
+  const authResult = await requireAdmin(request)
+  if ("error" in authResult) return authResult.error
+
   try {
     const { id } = await params
     const body = await request.json()

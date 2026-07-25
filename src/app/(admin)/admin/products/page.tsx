@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
 import { formatPrice } from "@/lib/utils"
+import { authFetch } from "@/lib/auth-client"
 import { Plus, Pencil, Trash2, X, Save } from "lucide-react"
 import type { Product, PricingTier } from "@/types"
 
@@ -18,7 +19,7 @@ export default function AdminProductsPage() {
 
   const fetchProducts = async () => {
     try {
-      const res = await fetch("/api/products")
+      const res = await authFetch("/api/products")
       const data = await res.json()
       setProducts(data)
     } catch (err) {
@@ -37,13 +38,13 @@ export default function AdminProductsPage() {
     try {
       const { id, ...data } = editingProduct
       if (id) {
-        await fetch(`/api/products/${id}`, {
+        await authFetch(`/api/products/${id}`, {
           method: "PATCH",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
         })
       } else {
-        await fetch("/api/products", {
+        await authFetch("/api/products", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
@@ -60,7 +61,7 @@ export default function AdminProductsPage() {
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this product?")) return
     try {
-      await fetch(`/api/products/${id}`, { method: "DELETE" })
+      await authFetch(`/api/products/${id}`, { method: "DELETE" })
       await fetchProducts()
     } catch (err) {
       console.error(err)
