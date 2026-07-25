@@ -22,7 +22,8 @@ export function ScienceSection() {
                   We don&apos;t just mask your signals. PhytoFlex Gold regulates the systemic response that causes biological wear and tear. Our 94% bio-available liquid formula targets 10 key inflammatory biomarkers for rapid joint, nerve, and muscle restoration.
                 </p>
               </div>
-              <div className="flex gap-4">
+              <div className="flex gap-4 flex-wrap">
+                <a href="#benefits" className="bg-primary text-on-primary px-6 py-2 rounded-lg font-bold text-sm hover:bg-primary/90 transition-colors">SEE ALL BENEFITS</a>
                 <a href="#ingredients" className="bg-surface-container-highest text-on-surface px-6 py-2 rounded-lg font-bold text-sm border border-outline-variant/30 hover:bg-surface-bright transition-colors">THE STRATEGY</a>
                 <a href="#pricing" className="bg-surface-container-highest text-on-surface px-6 py-2 rounded-lg font-bold text-sm border border-outline-variant/30 hover:bg-surface-bright transition-colors">PLATFORM DATA</a>
               </div>

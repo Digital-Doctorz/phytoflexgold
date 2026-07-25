@@ -13,6 +13,7 @@ export function ShopHeader() {
 
   const navLinks = [
     { href: "/#science", label: "Science" },
+    { href: "/#benefits", label: "Benefits" },
     { href: "/#ingredients", label: "Ingredients" },
     { href: "/#timeline", label: "Timeline" },
     { href: "/#pricing", label: "Pricing" },
