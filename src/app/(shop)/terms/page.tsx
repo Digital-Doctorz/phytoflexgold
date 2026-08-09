@@ -48,12 +48,13 @@ export default function TermsPage() {
           Terms of Service
         </h1>
         <p className="text-body-md text-on-surface-variant mb-6">
-          <strong>Last updated:</strong> January 1, 2024
+          <strong>Last updated:</strong> January 1, 2025
         </p>
         <p className="text-body-md text-on-surface-variant mb-8">
-          Welcome to PhytoFlex Gold. These Terms of Service govern your use of
-          our website and the purchase of products from Liquid Health Inc. By
-          accessing our website or placing an order, you agree to these terms.
+          Welcome to PhytoFlex Gold, a product of Liquid Health. These Terms of
+          Service govern your use of our website and the purchase of products
+          from Liquid Health. By accessing our website or placing an order, you
+          agree to these terms.
         </p>
 
         <section className="mb-10">
@@ -131,7 +132,7 @@ export default function TermsPage() {
           </h2>
           <p className="text-body-md text-on-surface-variant">
             All content on this website, including text, graphics, logos, and
-            images, is the property of Liquid Health Inc. and is protected by
+            images, is the property of Liquid Health and is protected by
             applicable intellectual property laws. You may not reproduce,
             distribute, or create derivative works without our express written
             permission.
@@ -143,7 +144,7 @@ export default function TermsPage() {
             Limitation of Liability
           </h2>
           <p className="text-body-md text-on-surface-variant">
-            Liquid Health Inc. shall not be liable for any indirect, incidental,
+            Liquid Health shall not be liable for any indirect, incidental,
             special, or consequential damages resulting from the use or
             inability to use our products or services. Our total liability shall
             not exceed the amount paid by you for the product in question.
@@ -157,7 +158,7 @@ export default function TermsPage() {
           <p className="text-body-md text-on-surface-variant">
             These Terms shall be governed by and construed in accordance with
             the laws of India. Any disputes shall be subject to the exclusive
-            jurisdiction of the courts in New Delhi, India.
+            jurisdiction of the courts in Kolkata, India.
           </p>
         </section>
 
@@ -174,7 +175,21 @@ export default function TermsPage() {
             >
               support@phytoflexgold.com
             </a>{" "}
-            or call us at +91 98765 43210.
+            or call us at{" "}
+            <a
+              href="tel:+919555955595"
+              className="text-primary hover:underline"
+            >
+              +91 9555 9555 95
+            </a>
+            .
+          </p>
+          <p className="text-body-md text-on-surface-variant mt-4">
+            Liquid Health
+            <br />
+            8/2A, Hazra Road
+            <br />
+            Kolkata, West Bengal 700021, India
           </p>
         </section>
       </article>

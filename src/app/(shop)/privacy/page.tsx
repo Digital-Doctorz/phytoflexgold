@@ -4,14 +4,14 @@ import { SITE_URL, buildBreadcrumbSchema } from "@/lib/seo"
 export const metadata: Metadata = {
   title: "Privacy Policy | PhytoFlex Gold",
   description:
-    "Read the PhytoFlex Gold privacy policy. Learn how Liquid Health Inc. collects, uses, and protects your personal information when you purchase our joint supplement.",
+    "Read the PhytoFlex Gold privacy policy. Learn how Liquid Health collects, uses, and protects your personal information when you purchase our joint supplement.",
   alternates: {
     canonical: `${SITE_URL}/privacy`,
   },
   openGraph: {
     title: "Privacy Policy | PhytoFlex Gold",
     description:
-      "Learn how Liquid Health Inc. protects your personal information.",
+      "Learn how Liquid Health protects your personal information.",
     url: `${SITE_URL}/privacy`,
     type: "website",
     images: [
@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title: "Privacy Policy | PhytoFlex Gold",
-    description: "Learn how Liquid Health Inc. protects your personal information.",
+    description: "Learn how Liquid Health protects your personal information.",
     images: [`${SITE_URL}/og-image.svg`],
   },
 }
@@ -48,10 +48,10 @@ export default function PrivacyPage() {
           Privacy Policy
         </h1>
         <p className="text-body-md text-on-surface-variant mb-6">
-          <strong>Last updated:</strong> January 1, 2024
+          <strong>Last updated:</strong> January 1, 2025
         </p>
         <p className="text-body-md text-on-surface-variant mb-8">
-          Liquid Health Inc. (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;)
+          Liquid Health (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;)
           operates the PhytoFlex Gold website. This page informs you of our
           policies regarding the collection, use, and disclosure of personal
           information when you use our service.
@@ -187,7 +187,21 @@ export default function PrivacyPage() {
             >
               support@phytoflexgold.com
             </a>{" "}
-            or call us at +91 98765 43210.
+            or call us at{" "}
+            <a
+              href="tel:+919555955595"
+              className="text-primary hover:underline"
+            >
+              +91 9555 9555 95
+            </a>
+            .
+          </p>
+          <p className="text-body-md text-on-surface-variant mt-4">
+            Liquid Health
+            <br />
+            8/2A, Hazra Road
+            <br />
+            Kolkata, West Bengal 700021, India
           </p>
         </section>
       </article>

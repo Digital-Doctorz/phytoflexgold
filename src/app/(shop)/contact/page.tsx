@@ -4,7 +4,7 @@ import { SITE_URL, buildBreadcrumbSchema } from "@/lib/seo"
 export const metadata: Metadata = {
   title: "Contact Us | PhytoFlex Gold",
   description:
-    "Get in touch with PhytoFlex Gold support. Contact Liquid Health Inc. for product inquiries, order support, or questions about our joint health supplement.",
+    "Get in touch with PhytoFlex Gold support. Contact Liquid Health for product inquiries, order support, or questions about our joint health supplement.",
   alternates: {
     canonical: `${SITE_URL}/contact`,
   },
@@ -60,10 +60,10 @@ export default function ContactPage() {
               Phone
             </h2>
             <a
-              href="tel:+919876543210"
+              href="tel:+919555955595"
               className="text-body-md text-on-surface-variant hover:text-primary transition-colors"
             >
-              +91 98765 43210
+              +91 9555 9555 95
             </a>
             <p className="text-body-sm text-on-surface-variant mt-2">
               Mon–Sat, 9am–6pm IST
@@ -96,10 +96,12 @@ export default function ContactPage() {
               Address
             </h2>
             <p className="text-body-md text-on-surface-variant">
-              Liquid Health Inc.
+              Liquid Health
             </p>
             <p className="text-body-sm text-on-surface-variant mt-2">
-              New Delhi, India
+              8/2A, Hazra Road
+              <br />
+              Kolkata, West Bengal 700021, India
             </p>
           </div>
         </div>

@@ -48,7 +48,7 @@ export default function DisclaimerPage() {
           Medical Disclaimer
         </h1>
         <p className="text-body-md text-on-surface-variant mb-6">
-          <strong>Last updated:</strong> January 1, 2024
+          <strong>Last updated:</strong> January 1, 2025
         </p>
 
         <section className="mb-10">
@@ -130,7 +130,21 @@ export default function DisclaimerPage() {
             >
               support@phytoflexgold.com
             </a>{" "}
-            or call us at +91 98765 43210.
+            or call us at{" "}
+            <a
+              href="tel:+919555955595"
+              className="text-primary hover:underline"
+            >
+              +91 9555 9555 95
+            </a>
+            .
+          </p>
+          <p className="text-body-md text-on-surface-variant mt-4">
+            Liquid Health
+            <br />
+            8/2A, Hazra Road
+            <br />
+            Kolkata, West Bengal 700021, India
           </p>
         </section>
       </article>

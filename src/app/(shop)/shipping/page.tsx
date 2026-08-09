@@ -55,7 +55,7 @@ const faqs = [
   {
     question: "What is your return policy?",
     answer:
-      "We offer a 30-day satisfaction guarantee. If you are not satisfied with your purchase, you may return unopened products within 30 days of delivery for a full refund. Contact us at support@phytoflexgold.com to initiate a return.",
+      "We offer a 30-day satisfaction guarantee. If you are not satisfied with your purchase, you may return unopened products within 30 days of delivery for a full refund. Contact us at support@phytoflexgold.com or call +91 9555 9555 95 to initiate a return. See our full Return & Refund Policy at /returns.",
   },
   {
     question: "What if my order arrives damaged?",

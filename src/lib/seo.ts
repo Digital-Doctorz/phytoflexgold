@@ -1,19 +1,19 @@
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://phytoflexgold.vercel.app"
 
 export const ORGANIZATION = {
-  name: "PhytoFlex Gold",
-  legalName: "Liquid Health Inc.",
+  name: "Liquid Health",
+  legalName: "Liquid Health",
   url: SITE_URL,
   logo: `${SITE_URL}/logo.png`,
-  description: "Clinical-strength botanical supplement engineered with 12 high-altitude botanical extracts for joint, nerve, and muscle vitality.",
+  description: "Makers of PhytoFlex Gold, a clinical-strength botanical supplement engineered with 12 high-altitude botanical extracts for joint, nerve, and muscle vitality.",
   email: "support@phytoflexgold.com",
-  phone: "+91-9876543210",
+  phone: "+91-9555955595",
   address: {
     "@type": "PostalAddress",
-    streetAddress: "New Delhi",
-    addressLocality: "New Delhi",
-    addressRegion: "Delhi",
-    postalCode: "110001",
+    streetAddress: "8/2A, Hazra Road",
+    addressLocality: "Kolkata",
+    addressRegion: "West Bengal",
+    postalCode: "700021",
     addressCountry: "IN",
   },
   sameAs: [
@@ -25,10 +25,10 @@ export const ORGANIZATION = {
   ],
   contactPoint: {
     "@type": "ContactPoint",
-    telephone: "+91-9876543210",
+    telephone: "+91-9555955595",
     contactType: "customer service",
     email: "support@phytoflexgold.com",
-    availableLanguage: ["English", "Hindi"],
+    availableLanguage: ["English", "Hindi", "Bengali"],
     areaServed: "IN",
   },
 } as const
@@ -69,8 +69,8 @@ export function buildLocalBusinessSchema() {
     address: ORGANIZATION.address,
     geo: {
       "@type": "GeoCoordinates",
-      latitude: 28.6139,
-      longitude: 77.209,
+      latitude: 22.5726,
+      longitude: 88.3639,
     },
     openingHoursSpecification: {
       "@type": "OpeningHoursSpecification",
