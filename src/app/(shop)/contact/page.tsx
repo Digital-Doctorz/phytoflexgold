@@ -103,6 +103,11 @@ export default function ContactPage() {
               <br />
               Kolkata, West Bengal 700021, India
             </p>
+            <p className="text-body-sm text-on-surface-variant mt-4">
+              U-443, U-443, 2ND FLOOR, JJ COLONY
+              <br />
+              NEW DELHI, North West Delhi, Delhi, 110083
+            </p>
           </div>
         </div>
 
