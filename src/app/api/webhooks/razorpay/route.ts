@@ -1,57 +1,74 @@
-import { NextResponse } from "next/server"
+import { NextRequest, NextResponse } from "next/server"
 import { getAdminDb } from "@/lib/firebase-admin"
+import { createHmac, timingSafeEqual } from "crypto"
 
-export async function POST(request: Request) {
+// Verifies that the webhook request actually came from Razorpay.
+function isWebhookValid(rawBody: string, signature: string | null) {
+  if (!signature) return false
+  const secret = process.env.RAZORPAY_KEY_SECRET
+  if (!secret) return false
+  const expected = createHmac("sha256", secret).update(rawBody).digest("hex")
+  const expectedBuffer = Buffer.from(expected, "utf8")
+  const signatureBuffer = Buffer.from(signature, "utf8")
+  return (
+    expectedBuffer.length === signatureBuffer.length &&
+    timingSafeEqual(expectedBuffer, signatureBuffer)
+  )
+}
+
+export async function POST(request: NextRequest) {
   try {
-    const body = await request.json()
-    const { action } = body
-    const db = getAdminDb()
+    const rawBody = await request.text()
+    const signature = request.headers.get("x-razorpay-signature")
 
-    if (action === "create-order") {
-      const { orderId, amount } = body
-      const crypto = await import("crypto")
-      const Razorpay = (await import("razorpay")).default
-      const razorpay = new Razorpay({
-        key_id: process.env.RAZORPAY_KEY_ID!,
-        key_secret: process.env.RAZORPAY_KEY_SECRET!,
-      })
-      const razorpayOrder = await razorpay.orders.create({
-        amount: Math.round(amount * 100),
-        currency: "INR",
-        receipt: orderId.slice(0, 20),
-      })
-
-      await db.collection("orders").doc(orderId).update({
-        razorpay: {
-          orderId: razorpayOrder.id,
-        },
-      })
-
-      return NextResponse.json({ razorpayOrderId: razorpayOrder.id })
+    if (!isWebhookValid(rawBody, signature)) {
+      return NextResponse.json({ error: "Invalid webhook signature" }, { status: 401 })
     }
 
-    if (action === "verify") {
-      const { createHmac } = await import("crypto")
-      const { orderId, razorpayOrderId, razorpayPaymentId, razorpaySignature } = body
-      const secret = process.env.RAZORPAY_KEY_SECRET!
-      const expected = createHmac("sha256", secret)
-        .update(`${razorpayOrderId}|${razorpayPaymentId}`)
-        .digest("hex")
+    const payload = JSON.parse(rawBody)
+    const event = payload.event
 
-      if (expected !== razorpaySignature) {
-        return NextResponse.json({ error: "Invalid signature" }, { status: 400 })
-      }
+    if (event !== "payment.captured" && event !== "payment.failed") {
+      return NextResponse.json({ received: true })
+    }
 
-      await db.collection("orders").doc(orderId).update({
+    const payment = payload.payload?.payment?.entity
+    const razorpayOrderId = payment?.order_id
+    const razorpayPaymentId = payment?.id
+
+    if (typeof razorpayOrderId !== "string" || razorpayOrderId.trim() === "") {
+      return NextResponse.json({ error: "Missing order_id in webhook payload" }, { status: 400 })
+    }
+
+    const db = getAdminDb()
+    const ordersSnap = await db
+      .collection("orders")
+      .where("razorpay.orderId", "==", razorpayOrderId)
+      .limit(1)
+      .get()
+
+    if (ordersSnap.empty) {
+      return NextResponse.json({ error: "No matching order found" }, { status: 404 })
+    }
+
+    const orderRef = ordersSnap.docs[0].ref
+
+    if (event === "payment.captured") {
+      await orderRef.update({
         status: "PAID",
         "razorpay.paymentId": razorpayPaymentId,
-        "razorpay.signature": razorpaySignature,
+        updatedAt: new Date(),
       })
-
-      return NextResponse.json({ success: true })
+    } else {
+      await orderRef.update({
+        status: "PENDING",
+        "razorpay.paymentId": razorpayPaymentId,
+        "razorpay.error": payment?.error_description || "Payment failed",
+        updatedAt: new Date(),
+      })
     }
 
-    return NextResponse.json({ error: "Unknown action" }, { status: 400 })
+    return NextResponse.json({ received: true })
   } catch (error) {
     console.error("Razorpay webhook error:", error)
     return NextResponse.json({ error: "Webhook processing failed" }, { status: 500 })

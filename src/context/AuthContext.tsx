@@ -9,7 +9,6 @@ interface AuthContextType {
   userProfile: User | null
   loading: boolean
   signIn: (email: string, password: string) => Promise<void>
-  signUp: (email: string, password: string, name: string) => Promise<void>
   signOut: () => Promise<void>
   isAdmin: boolean
 }
@@ -18,7 +17,6 @@ const AuthContext = createContext<AuthContextType>({
   userProfile: null,
   loading: true,
   signIn: async () => {},
-  signUp: async () => {},
   signOut: async () => {},
   isAdmin: false,
 })
@@ -75,21 +73,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
-  const signUp = async (email: string, password: string, name: string) => {
-    const res = await fetch("/api/auth/register", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password, name }),
-    })
-
-    const data = await res.json()
-    if (!res.ok) {
-      throw new Error(data.error || "Failed to register")
-    }
-
-    await signInWithCustomToken(auth, data.customToken)
-  }
-
   const signOut = async () => {
     await firebaseSignOut(auth)
     setUserProfile(null)
@@ -98,7 +81,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const isAdmin = userProfile?.role === "ADMIN"
 
   return (
-    <AuthContext.Provider value={{ userProfile, loading, signIn, signUp, signOut, isAdmin }}>
+    <AuthContext.Provider value={{ userProfile, loading, signIn, signOut, isAdmin }}>
       {children}
     </AuthContext.Provider>
   )

@@ -77,7 +77,7 @@ function LoginForm() {
               <Input
                 id="email"
                 type="email"
-                placeholder="admin@phytoflexgold.com"
+                placeholder="digitaldoctors.sales@gmail.com"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
@@ -99,10 +99,7 @@ function LoginForm() {
             </Button>
           </form>
           <p className="text-center text-sm text-on-surface-variant mt-4">
-            Don&apos;t have an account?{" "}
-            <Link href="/auth/register" className="text-primary hover:underline">
-              Register
-            </Link>
+            Contact the administrator for access.
           </p>
         </CardContent>
       </Card>

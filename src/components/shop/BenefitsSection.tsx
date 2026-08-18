@@ -58,7 +58,7 @@ const allBenefits = [...leftBenefits, ...rightBenefits]
 
 function BodyDiagram() {
   return (
-    <div className="relative w-full max-w-[220px] sm:max-w-[260px] md:max-w-[300px] aspect-[3/5] mx-auto">
+    <div className="relative w-full max-w-[280px] sm:max-w-[320px] md:max-w-[400px] lg:max-w-[480px] aspect-[1/2] mx-auto z-0">
       <div
         className="absolute inset-[10%] rounded-full blur-3xl opacity-40 pointer-events-none"
         style={{
@@ -72,7 +72,7 @@ function BodyDiagram() {
         alt="Anatomical figure showing the six body systems supported by PhytoFlex Gold"
         fill
         className="object-contain object-center drop-shadow-[0_0_32px_rgba(255,107,53,0.12)]"
-        sizes="(max-width: 768px) 220px, 300px"
+        sizes="(max-width: 768px) 280px, (max-width: 1024px) 400px, 480px"
         priority={false}
       />
     </div>
@@ -234,7 +234,7 @@ export function BenefitsSection() {
             ))}
           </div>
 
-          <div className="col-span-4 flex justify-center items-center lg:sticky lg:top-24 py-8">
+          <div className="col-span-4 flex justify-center items-center lg:sticky lg:top-32 py-8 z-0">
             <BodyDiagram />
           </div>
 

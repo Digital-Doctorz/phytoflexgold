@@ -18,10 +18,21 @@ declare global {
   }
 }
 
+interface RazorpayFailureResponse {
+  error?: {
+    code?: string
+    description?: string
+    reason?: string
+    source?: string
+    step?: string
+  }
+}
+
 export default function CheckoutPage() {
   const { items, total, clearCart } = useCart()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null)
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -40,6 +51,7 @@ export default function CheckoutPage() {
     e.preventDefault()
     if (items.length === 0) return
     setLoading(true)
+    setError(null)
 
     try {
       const orderRes = await fetch("/api/orders", {
@@ -53,40 +65,59 @@ export default function CheckoutPage() {
         }),
       })
       const orderData = await orderRes.json()
+      if (!orderRes.ok || !orderData.id) {
+        throw new Error(orderData.error || "Failed to create your order")
+      }
+      const createdOrderId = orderData.id as string
 
-      const razorpayRes = await fetch("/api/webhooks/razorpay", {
+      const createOrderRes = await fetch("/api/create-order", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          action: "create-order",
-          orderId: orderData.id,
+          orderId: createdOrderId,
           amount: total,
         }),
       })
-      const razorpayData = await razorpayRes.json()
+      const createOrderData = await createOrderRes.json()
+      if (!createOrderRes.ok || !createOrderData.orderId) {
+        throw new Error(createOrderData.error || "Failed to initialize payment")
+      }
 
-      const options = {
+      const options: Record<string, unknown> = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
         amount: total * 100,
         currency: "INR",
         name: "PhytoFlex Gold",
-        description: `Order ${orderData.id.slice(0, 8)}`,
-        order_id: razorpayData.razorpayOrderId,
+        description: `Order ${createdOrderId.slice(0, 8)}`,
+        order_id: createOrderData.orderId,
         prefill: { name: form.name, email: form.email, contact: form.phone },
-        handler: async function (response: any) {
-          await fetch("/api/webhooks/razorpay", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({
-              action: "verify",
-              orderId: orderData.id,
-              razorpayOrderId: response.razorpay_order_id,
-              razorpayPaymentId: response.razorpay_payment_id,
-              razorpaySignature: response.razorpay_signature,
-            }),
-          })
-          clearCart()
-          router.push(`/order-confirmation?id=${orderData.id}`)
+        handler: async function (response: { razorpay_payment_id: string; razorpay_order_id: string; razorpay_signature: string }) {
+          try {
+            const verifyRes = await fetch("/api/verify-payment", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                orderId: createdOrderId,
+                razorpayOrderId: response.razorpay_order_id,
+                razorpayPaymentId: response.razorpay_payment_id,
+                razorpaySignature: response.razorpay_signature,
+              }),
+            })
+            const verifyData = await verifyRes.json()
+
+            if (!verifyRes.ok || !verifyData.success) {
+              setError(verifyData.error || "Payment could not be verified. Please contact support.")
+              setLoading(false)
+              return
+            }
+
+            clearCart()
+            router.push(`/order-confirmation?id=${createdOrderId}`)
+          } catch (err) {
+            console.error("Verification error:", err)
+            setError("Could not verify payment. Please contact support with your order ID.")
+            setLoading(false)
+          }
         },
         modal: {
           ondismiss: () => setLoading(false),
@@ -94,9 +125,15 @@ export default function CheckoutPage() {
       }
 
       const rzp = new (window as any).Razorpay(options)
+      rzp.on("payment.failed", function (response: RazorpayFailureResponse) {
+        const description = response?.error?.description || response?.error?.reason || "Please try again."
+        setError(`Payment failed: ${description}`)
+        setLoading(false)
+      })
       rzp.open()
     } catch (err) {
       console.error(err)
+      setError(err instanceof Error ? err.message : "Something went wrong. Please try again.")
       setLoading(false)
     }
   }
@@ -180,6 +217,11 @@ export default function CheckoutPage() {
                     <span className="font-bold text-on-surface">{formatPrice(total)}</span>
                   </div>
                 </div>
+                {error && (
+                  <div role="alert" className="bg-error-container/20 border border-error/30 rounded-lg px-4 py-3 text-body-sm text-on-surface">
+                    {error}
+                  </div>
+                )}
                 <Button type="submit" className="w-full" size="lg" disabled={loading}>
                   {loading ? "Processing..." : `Pay ${formatPrice(total)}`}
                 </Button>

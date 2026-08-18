@@ -51,7 +51,7 @@ node scripts/seed.js
 
 # This creates:
 # - PhytoFlex Gold product with 3 pricing tiers
-# - Admin user: admin@phytoflex.com / Admin@123
+# - Admin user: digitaldoctors.sales@gmail.com / 123456
 ```
 
 ## Step 3: GitHub Repository
@@ -78,6 +78,6 @@ gh repo create phytoflex-gold --public --source=. --remote=origin --push
 ## Step 6: Verify
 
 1. Visit your Vercel URL
-2. Login at `/auth/login` with admin@phytoflex.com / Admin@123
+2. Login at `/auth/login` with digitaldoctors.sales@gmail.com / 123456
 3. Access dashboard at `/admin/dashboard`
 4. Test checkout flow

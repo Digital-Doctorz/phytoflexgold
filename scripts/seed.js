@@ -46,22 +46,30 @@ async function seed() {
 
   console.log("Creating admin user...");
   try {
-    const adminUser = await auth.createUser({
-      email: "admin@phytoflex.com",
-      password: "Admin@123",
-      displayName: "Admin",
-    });
-    await db.collection("users").doc(adminUser.uid).set({
-      email: "admin@phytoflex.com",
-      name: "Admin",
-      role: "ADMIN",
-      createdAt: new Date(),
-    });
-    console.log("Admin user created:", adminUser.uid);
-    console.log("Email: admin@phytoflex.com");
-    console.log("Password: Admin@123");
+    const adminEmail = "digitaldoctors.sales@gmail.com";
+    const adminPassword = "123456";
+
+    const existingUsers = await db.collection("users").where("email", "==", adminEmail).limit(1).get();
+    if (!existingUsers.empty) {
+      console.log(`Admin user already exists: ${adminEmail}`);
+    } else {
+      const adminUser = await auth.createUser({
+        email: adminEmail,
+        password: adminPassword,
+        displayName: "Admin",
+      });
+      await db.collection("users").doc(adminUser.uid).set({
+        email: adminEmail,
+        name: "Admin",
+        role: "ADMIN",
+        createdAt: new Date(),
+      });
+      console.log("Admin user created:", adminUser.uid);
+      console.log("Email:", adminEmail);
+      console.log("Password:", adminPassword);
+    }
   } catch (err) {
-    console.log("Admin user may already exist:", err.message);
+    console.log("Admin user creation error:", err.message);
   }
 
   console.log("Seed complete!");
