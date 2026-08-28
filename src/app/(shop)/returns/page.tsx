@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: `${SITE_URL}/og-image.svg`,
+        url: `${SITE_URL}/opengraph-image`,
         width: 1200,
         height: 630,
         alt: "PhytoFlex Gold Return & Refund Policy",
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Return & Refund Policy | PhytoFlex Gold",
     description: "Liquid Health 30-day return and refund policy for PhytoFlex Gold.",
-    images: [`${SITE_URL}/og-image.svg`],
+    images: [`${SITE_URL}/opengraph-image`],
   },
 }
 

@@ -1,7 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Select } from "@/components/ui/select"
@@ -39,7 +39,26 @@ export default function AdminOrdersPage() {
     }
   }
 
-  useEffect(() => { fetchOrders() }, [statusFilter])
+  useEffect(() => {
+    let cancelled = false
+    const run = async () => {
+      try {
+        const params = new URLSearchParams()
+        if (statusFilter) params.set("status", statusFilter)
+        const res = await authFetch(`/api/orders?${params}`)
+        const data = await res.json()
+        if (!cancelled) setOrders(data)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    void run()
+    return () => {
+      cancelled = true
+    }
+  }, [statusFilter])
 
   const updateStatus = async (id: string, status: OrderStatus) => {
     await authFetch(`/api/orders/${id}`, {

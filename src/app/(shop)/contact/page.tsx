@@ -1,5 +1,6 @@
 import type { Metadata } from "next"
 import { SITE_URL, buildBreadcrumbSchema } from "@/lib/seo"
+import { ContactForm } from "@/components/shop/ContactForm"
 
 export const metadata: Metadata = {
   title: "Contact Us | PhytoFlex Gold",
@@ -16,7 +17,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: `${SITE_URL}/og-image.svg`,
+        url: `${SITE_URL}/opengraph-image`,
         width: 1200,
         height: 630,
         alt: "Contact PhytoFlex Gold",
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Contact Us | PhytoFlex Gold",
     description: "Contact PhytoFlex Gold support for product inquiries and order support.",
-    images: [`${SITE_URL}/og-image.svg`],
+    images: [`${SITE_URL}/opengraph-image`],
   },
 }
 
@@ -115,80 +116,7 @@ export default function ContactPage() {
           <h2 className="text-title-lg font-bold text-on-surface mb-6">
             Send Us a Message
           </h2>
-          <form className="space-y-6" action="#" method="POST">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div>
-                <label
-                  htmlFor="name"
-                  className="block text-label-md text-on-surface-variant mb-2"
-                >
-                  Full Name
-                </label>
-                <input
-                  type="text"
-                  id="name"
-                  name="name"
-                  required
-                  className="w-full px-4 py-3 rounded-lg bg-surface border border-outline-variant/30 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
-                  placeholder="Your name"
-                />
-              </div>
-              <div>
-                <label
-                  htmlFor="email"
-                  className="block text-label-md text-on-surface-variant mb-2"
-                >
-                  Email Address
-                </label>
-                <input
-                  type="email"
-                  id="email"
-                  name="email"
-                  required
-                  className="w-full px-4 py-3 rounded-lg bg-surface border border-outline-variant/30 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
-                  placeholder="you@example.com"
-                />
-              </div>
-            </div>
-            <div>
-              <label
-                htmlFor="subject"
-                className="block text-label-md text-on-surface-variant mb-2"
-              >
-                Subject
-              </label>
-              <input
-                type="text"
-                id="subject"
-                name="subject"
-                required
-                className="w-full px-4 py-3 rounded-lg bg-surface border border-outline-variant/30 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary"
-                placeholder="How can we help?"
-              />
-            </div>
-            <div>
-              <label
-                htmlFor="message"
-                className="block text-label-md text-on-surface-variant mb-2"
-              >
-                Message
-              </label>
-              <textarea
-                id="message"
-                name="message"
-                rows={5}
-                required
-                className="w-full px-4 py-3 rounded-lg bg-surface border border-outline-variant/30 text-on-surface focus:outline-none focus:ring-2 focus:ring-primary resize-none"
-                placeholder="Tell us more..."
-              />
-            </div>
-            <button
-              type="submit"
-              className="bg-primary-container text-on-primary-container px-8 py-3 rounded-full font-bold transition-all active:scale-95 hover:shadow-lg"
-            >
-              Send Message
-            </button>
-          </form>
+          <ContactForm />
         </section>
       </section>
     </main>

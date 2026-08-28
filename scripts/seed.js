@@ -4,6 +4,7 @@
  * Run: node scripts/seed.js
  * Requires: FIREBASE_SERVICE_ACCOUNT_KEY env var
  */
+/* eslint-disable */
 
 const { initializeApp, cert, getApps } = require("firebase-admin/app");
 const { getFirestore } = require("firebase-admin/firestore");

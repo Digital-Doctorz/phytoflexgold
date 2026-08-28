@@ -32,9 +32,9 @@ const phases = [
 
 export function TimelineSection() {
   return (
-    <section className="py-32 relative overflow-hidden" id="timeline" aria-labelledby="timeline-heading">
+    <section className="py-16 md:py-32 relative overflow-hidden" id="timeline" aria-labelledby="timeline-heading">
       <div className="max-w-3xl mx-auto px-margin-mobile md:px-gutter-md relative">
-        <div className="text-center mb-24">
+        <div className="text-center mb-16 md:mb-24">
           <h2
             id="timeline-heading"
             className="text-headline-lg font-headline-lg mb-4"
@@ -45,33 +45,34 @@ export function TimelineSection() {
             A 12-week clinical protocol for systemic mobility restoration. Follow this evidence-based timeline for optimal results.
           </p>
         </div>
-        <div className="absolute left-1/2 -translate-x-1/2 top-48 bottom-0 w-1 bg-gradient-to-b from-primary-container to-secondary opacity-30 rounded-full" aria-hidden="true"></div>
-        <div className="space-y-24 relative" role="list">
+        <div className="space-y-12 md:space-y-24 relative" role="list">
+          <div className="absolute left-6 md:left-1/2 md:-translate-x-1/2 top-2 bottom-2 w-1 bg-gradient-to-b from-primary-container to-secondary opacity-30 rounded-full" aria-hidden="true"></div>
           {phases.map((phase) => (
             <div key={phase.week} className="flex items-center group" role="listitem">
               {phase.side === "left" && (
-                <div className="w-1/2 pr-12 text-right hidden md:block">
-                  <h3 className={`font-bold text-2xl ${phase.color.replace('border', 'text').replace('text-secondary', 'text-secondary').replace('text-primary', 'text-primary').replace('text-white', 'text-white')} mb-2`}>
+                <div className="hidden md:block w-1/2 pr-12 text-right">
+                  <h3 className={`font-bold text-2xl ${phase.color} mb-2`}>
                     {phase.label}
                   </h3>
                   <p className="text-on-surface-variant">{phase.desc}</p>
                 </div>
               )}
               <div
-                className={`z-10 w-12 h-12 rounded-full bg-background border-4 ${phase.color} flex items-center justify-center font-bold group-hover:scale-110 transition-transform`}
+                className={`relative z-10 w-12 h-12 shrink-0 rounded-full bg-background border-4 ${phase.color} flex items-center justify-center font-bold group-hover:scale-110 transition-transform`}
                 aria-hidden="true"
               >
                 {phase.week}
               </div>
-              <div className={`w-1/2 ${phase.side === 'left' ? 'pl-12' : 'pr-12 text-right'} md:text-left`}>
-                <h3 className={`font-bold text-2xl ${phase.color.replace('border', 'text').replace('text-secondary', 'text-secondary').replace('text-primary', 'text-primary').replace('text-white', 'text-white')} mb-2 md:hidden`}>
+              <div className="flex-1 min-w-0 pl-5 md:pl-12 md:w-1/2">
+                <h3 className={`font-bold text-2xl ${phase.color} mb-2 md:hidden`}>
                   {phase.label}
                 </h3>
                 <p className="text-headline-md font-headline-md">{phase.title}</p>
-                <p className="text-on-surface-variant md:hidden">{phase.desc}</p>
                 {phase.side === "right" && (
-                  <p className="text-on-surface-variant hidden md:block mt-2">{phase.desc}</p>
+                  <p className="hidden md:block text-on-surface-variant mt-2">{phase.desc}</p>
                 )}
+                <p className="text-on-surface-variant mt-2 md:hidden">{phase.desc}</p>
+                <p className="text-secondary text-body-sm mt-3">{phase.action}</p>
               </div>
             </div>
           ))}

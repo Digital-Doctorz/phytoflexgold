@@ -14,7 +14,10 @@ import Link from "next/link"
 
 declare global {
   interface Window {
-    Razorpay: any
+    Razorpay: new (options: Record<string, unknown>) => {
+      open: () => void
+      on: (event: string, handler: (response: RazorpayFailureResponse) => void) => void
+    }
   }
 }
 
@@ -75,7 +78,6 @@ export default function CheckoutPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           orderId: createdOrderId,
-          amount: total,
         }),
       })
       const createOrderData = await createOrderRes.json()
@@ -85,7 +87,7 @@ export default function CheckoutPage() {
 
       const options: Record<string, unknown> = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
-        amount: total * 100,
+        amount: createOrderData.amount,
         currency: "INR",
         name: "PhytoFlex Gold",
         description: `Order ${createdOrderId.slice(0, 8)}`,
@@ -124,7 +126,7 @@ export default function CheckoutPage() {
         },
       }
 
-      const rzp = new (window as any).Razorpay(options)
+      const rzp = new window.Razorpay(options)
       rzp.on("payment.failed", function (response: RazorpayFailureResponse) {
         const description = response?.error?.description || response?.error?.reason || "Please try again."
         setError(`Payment failed: ${description}`)

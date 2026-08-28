@@ -9,12 +9,20 @@ import { DollarSign, ShoppingCart, Users, Package } from "lucide-react"
 import { Skeleton } from "@/components/ui/skeleton"
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from "recharts"
 
+interface RecentOrder {
+  id: string
+  email?: string
+  createdAt: string | number
+  total: number
+  status: string
+}
+
 interface DashboardData {
   totalSales: number
   orderCount: number
   customerCount: number
   productCount: number
-  recentOrders: any[]
+  recentOrders: RecentOrder[]
   salesByDay: { date: string; sales: number }[]
 }
 
@@ -35,11 +43,11 @@ export default function DashboardPage() {
         const customers = await customersRes.json()
 
         const totalSales = orders
-          .filter((o: any) => o.status === "PAID" || o.status === "DELIVERED")
-          .reduce((sum: number, o: any) => sum + (o.total || 0), 0)
+          .filter((o: RecentOrder) => o.status === "PAID" || o.status === "DELIVERED")
+          .reduce((sum: number, o: RecentOrder) => sum + (o.total || 0), 0)
 
         const salesByDayMap: Record<string, number> = {}
-        orders.forEach((o: any) => {
+        orders.forEach((o: RecentOrder) => {
           if (o.status === "PAID" || o.status === "DELIVERED") {
             try {
               const dateStr = typeof o.createdAt === "string" ? o.createdAt : new Date(o.createdAt).toISOString().split("T")[0]
@@ -141,7 +149,7 @@ export default function DashboardPage() {
                     <Tooltip
                       contentStyle={{ background: '#1e2020', border: '1px solid #594139', borderRadius: '8px' }}
                       labelStyle={{ color: '#e2e2e2' }}
-                      formatter={(value: any) => [`₹${value}`, 'Revenue']}
+                      formatter={(value) => [`₹${value}`, 'Revenue']}
                     />
                     <Line type="monotone" dataKey="sales" stroke="#ff6b35" strokeWidth={2} dot={{ fill: '#ff6b35' }} />
                   </LineChart>
@@ -162,7 +170,7 @@ export default function DashboardPage() {
           <CardContent>
             {data?.recentOrders && data.recentOrders.length > 0 ? (
               <div className="space-y-4">
-                {data.recentOrders.map((order: any) => (
+                {data.recentOrders.map((order: RecentOrder) => (
                   <div key={order.id} className="flex items-center justify-between py-2 border-b border-outline-variant/10 last:border-0">
                     <div>
                       <p className="font-bold text-sm">{order.email || "Guest"}</p>

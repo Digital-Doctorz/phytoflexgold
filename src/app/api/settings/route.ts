@@ -8,7 +8,7 @@ const SETTINGS_DOC = "config/store"
 const DEFAULT_SETTINGS = {
   storeName: "PhytoFlex Gold",
   storeEmail: "support@phytoflexgold.com",
-  storePhone: "+91-XXXXXXXXXX",
+  storePhone: "+91 9555 9555 95",
   shippingFee: "0",
   freeShippingThreshold: "2100",
   taxRate: "0",

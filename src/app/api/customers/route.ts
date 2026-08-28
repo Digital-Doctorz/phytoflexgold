@@ -12,8 +12,8 @@ export async function GET(request: NextRequest) {
     const snapshot = await db.collection("users").orderBy("createdAt", "desc").get()
     const users = snapshot.docs.map((doc) => {
       const data = serializeFirestoreData(doc.data())
-      const { passwordHash, ...safeData } = data
-      return { id: doc.id, uid: doc.id, ...safeData }
+      delete data.passwordHash
+      return { id: doc.id, uid: doc.id, ...data }
     })
     return NextResponse.json(users)
   } catch (error) {

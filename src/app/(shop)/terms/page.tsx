@@ -16,7 +16,7 @@ export const metadata: Metadata = {
     type: "website",
     images: [
       {
-        url: `${SITE_URL}/og-image.svg`,
+        url: `${SITE_URL}/opengraph-image`,
         width: 1200,
         height: 630,
         alt: "PhytoFlex Gold Terms of Service",
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Terms of Service | PhytoFlex Gold",
     description: "Terms and conditions governing your use of the PhytoFlex Gold website.",
-    images: [`${SITE_URL}/og-image.svg`],
+    images: [`${SITE_URL}/opengraph-image`],
   },
 }
 

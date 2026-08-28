@@ -51,11 +51,11 @@ export const metadata: Metadata = {
       "Engineered with 12 clinical botanicals. 94% bio-available liquid formula that restores joint, nerve, and muscle vitality at a cellular level.",
     images: [
       {
-        url: `${SITE_URL}/og-image.svg`,
+        url: `${SITE_URL}/opengraph-image`,
         width: 1200,
         height: 630,
         alt: "PhytoFlex Gold - Clinical-Grade Joint & Mobility Supplement",
-        type: "image/svg+xml",
+        type: "image/png",
       },
     ],
   },
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
     title: "PhytoFlex Gold | Clinical-Grade Joint & Mobility Supplement",
     description:
       "Engineered with 12 clinical botanicals. 94% bio-available liquid formula that restores joint, nerve, and muscle vitality.",
-    images: [`${SITE_URL}/og-image.svg`],
+    images: [`${SITE_URL}/twitter-image`],
   },
   robots: {
     index: true,
@@ -79,10 +79,6 @@ export const metadata: Metadata = {
   },
   alternates: {
     canonical: SITE_URL,
-  },
-  icons: {
-    icon: "/favicon.ico",
-    apple: "/apple-touch-icon.png",
   },
 }
 

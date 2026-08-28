@@ -4,7 +4,6 @@ import type { NextRequest } from "next/server"
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
   const isAdminRoute = pathname.startsWith("/admin")
-  const isAuthRoute = pathname.startsWith("/auth")
 
   if (isAdminRoute && !request.cookies.get("__session")) {
     const loginUrl = new URL("/auth/login", request.url)

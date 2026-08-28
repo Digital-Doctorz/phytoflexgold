@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       tags: [post.category, "joint health", "supplements"],
       images: [
         {
-          url: `${SITE_URL}/og-image.svg`,
+          url: `${SITE_URL}/opengraph-image`,
           width: 1200,
           height: 630,
           alt: post.title,
@@ -44,7 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       card: "summary_large_image",
       title: post.title,
       description: post.description,
-      images: [`${SITE_URL}/og-image.svg`],
+      images: [`${SITE_URL}/opengraph-image`],
     },
   }
 }

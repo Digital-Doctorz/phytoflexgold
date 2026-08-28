@@ -27,7 +27,7 @@ export async function GET(req: NextRequest) {
       phone: data.phone || "",
       role: data.role || "USER",
     })
-  } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
+  } catch (error: unknown) {
+    return NextResponse.json({ error: error instanceof Error ? error.message : "Internal error" }, { status: 500 })
   }
 }

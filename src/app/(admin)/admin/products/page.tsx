@@ -117,7 +117,24 @@ export default function AdminProductsPage() {
     }
   }
 
-  useEffect(() => { void fetchProducts() }, [])
+  useEffect(() => {
+    let cancelled = false
+    const run = async () => {
+      try {
+        const res = await authFetch("/api/products")
+        const data = await res.json()
+        if (!cancelled) setProducts(data)
+      } catch (err) {
+        console.error(err)
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+    void run()
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const persistProduct = useCallback(
     async (product: Product) => {
@@ -387,6 +404,7 @@ export default function AdminProductsPage() {
               <div key={product.id} className="flex items-center justify-between p-6 hover:bg-surface-container/50 transition-colors">
                 <div className="flex items-center gap-4">
                   {product.imageUrl && (
+                    // eslint-disable-next-line @next/next/no-img-element
                     <img src={product.imageUrl} alt={product.name} className="w-16 h-16 rounded-lg object-cover bg-surface-container-highest" />
                   )}
                   <div>

@@ -68,8 +68,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
     try {
       await signInWithCustomToken(auth, data.customToken)
-    } catch (err: any) {
-      throw new Error("Failed to authenticate with server: " + (err.message || "Unknown error"))
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Unknown error"
+      throw new Error("Failed to authenticate with server: " + message)
     }
   }
 

@@ -6,16 +6,9 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json().catch(() => null)
     const orderId = body?.orderId
-    const amount = body?.amount
 
     if (typeof orderId !== "string" || orderId.trim() === "") {
       return NextResponse.json({ error: "orderId is required" }, { status: 400 })
-    }
-    if (typeof amount !== "number" || !Number.isFinite(amount) || amount * 100 < MIN_AMOUNT_PAISE) {
-      return NextResponse.json(
-        { error: `amount must be a number of at least ${MIN_AMOUNT_PAISE / 100} rupee` },
-        { status: 400 }
-      )
     }
 
     const db = getAdminDb()
@@ -24,6 +17,25 @@ export async function POST(request: NextRequest) {
 
     if (!orderSnap.exists) {
       return NextResponse.json({ error: "Order not found" }, { status: 404 })
+    }
+
+    const order = orderSnap.data()!
+    const amount = order.total
+
+    // The client-supplied amount is ignored. The order total stored on the
+    // server is the only acceptable value for the Razorpay order.
+    if (typeof amount !== "number" || !Number.isFinite(amount) || amount * 100 < MIN_AMOUNT_PAISE) {
+      return NextResponse.json({ error: "Order total is invalid" }, { status: 400 })
+    }
+
+    // If a Razorpay order was already created for this order, return it instead
+    // of charging the customer twice on a retry.
+    if (typeof order.razorpay?.orderId === "string" && order.razorpay.orderId !== "") {
+      return NextResponse.json({
+        orderId: order.razorpay.orderId,
+        amount: Math.round(amount * 100),
+        currency: "INR",
+      })
     }
 
     const razorpayOrder = await createRazorpayOrder(amount, orderId)
