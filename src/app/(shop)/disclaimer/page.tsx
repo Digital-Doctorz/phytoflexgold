@@ -140,7 +140,7 @@ export default function DisclaimerPage() {
             .
           </p>
           <p className="text-body-md text-on-surface-variant mt-4">
-            Liquid Health
+            Liquid Health by Trade Me India
             <br />
             8/2A, Hazra Road
             <br />

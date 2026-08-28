@@ -51,7 +51,7 @@ export default function PrivacyPage() {
           <strong>Last updated:</strong> January 1, 2025
         </p>
         <p className="text-body-md text-on-surface-variant mb-8">
-          Liquid Health (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;)
+          Liquid Health by Trade Me India (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;)
           operates the PhytoFlex Gold website. This page informs you of our
           policies regarding the collection, use, and disclosure of personal
           information when you use our service.
@@ -197,7 +197,7 @@ export default function PrivacyPage() {
             .
           </p>
           <p className="text-body-md text-on-surface-variant mt-4">
-            Liquid Health
+            Liquid Health by Trade Me India
             <br />
             8/2A, Hazra Road
             <br />

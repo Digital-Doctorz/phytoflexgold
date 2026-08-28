@@ -51,9 +51,9 @@ export default function TermsPage() {
           <strong>Last updated:</strong> January 1, 2025
         </p>
         <p className="text-body-md text-on-surface-variant mb-8">
-          Welcome to PhytoFlex Gold, a product of Liquid Health. These Terms of
+          Welcome to PhytoFlex Gold, a product of Liquid Health by Trade Me India. These Terms of
           Service govern your use of our website and the purchase of products
-          from Liquid Health. By accessing our website or placing an order, you
+          from Liquid Health by Trade Me India. By accessing our website or placing an order, you
           agree to these terms.
         </p>
 
@@ -132,7 +132,7 @@ export default function TermsPage() {
           </h2>
           <p className="text-body-md text-on-surface-variant">
             All content on this website, including text, graphics, logos, and
-            images, is the property of Liquid Health and is protected by
+            images, is the property of Liquid Health by Trade Me India and is protected by
             applicable intellectual property laws. You may not reproduce,
             distribute, or create derivative works without our express written
             permission.
@@ -144,7 +144,7 @@ export default function TermsPage() {
             Limitation of Liability
           </h2>
           <p className="text-body-md text-on-surface-variant">
-            Liquid Health shall not be liable for any indirect, incidental,
+            Liquid Health by Trade Me India shall not be liable for any indirect, incidental,
             special, or consequential damages resulting from the use or
             inability to use our products or services. Our total liability shall
             not exceed the amount paid by you for the product in question.
@@ -185,7 +185,7 @@ export default function TermsPage() {
             .
           </p>
           <p className="text-body-md text-on-surface-variant mt-4">
-            Liquid Health
+            Liquid Health by Trade Me India
             <br />
             8/2A, Hazra Road
             <br />

@@ -59,7 +59,7 @@ export function ShopFooter() {
       </div>
       <div className="max-w-container-max mx-auto px-margin-mobile md:px-gutter-md pt-10 border-t border-outline-variant/10 text-center">
         <p className="text-body-md text-on-surface-variant opacity-60">
-          &copy; 2024–2026 Liquid Health. PhytoFlex Gold is a product of Liquid Health. All rights reserved.
+          &copy; 2024–2026 Liquid Health by Trade Me India. PhytoFlex Gold is a product of Liquid Health by Trade Me India. All rights reserved.
         </p>
       </div>
     </footer>

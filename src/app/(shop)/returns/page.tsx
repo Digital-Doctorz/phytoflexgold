@@ -51,7 +51,7 @@ export default function ReturnsPage() {
           <strong>Last updated:</strong> January 1, 2025
         </p>
         <p className="text-body-md text-on-surface-variant mb-8">
-          Liquid Health (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;)
+          Liquid Health by Trade Me India (&quot;we,&quot; &quot;our,&quot; or &quot;us&quot;)
           wants you to be completely satisfied with every bottle of PhytoFlex
           Gold you purchase. This Return &amp; Refund Policy explains how you can
           return a product and receive a refund.
@@ -171,7 +171,7 @@ export default function ReturnsPage() {
             .
           </p>
           <p className="text-body-md text-on-surface-variant mt-4">
-            Liquid Health
+            Liquid Health by Trade Me India
             <br />
             8/2A, Hazra Road
             <br />
