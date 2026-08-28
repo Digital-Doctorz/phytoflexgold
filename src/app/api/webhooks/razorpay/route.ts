@@ -57,6 +57,10 @@ export async function POST(request: NextRequest) {
       await orderRef.update({
         status: "PAID",
         "razorpay.paymentId": razorpayPaymentId,
+        "razorpay.method": payment?.method || null,
+        "razorpay.fee": typeof payment?.fee === "number" ? payment.fee / 100 : null,
+        "razorpay.currency": payment?.currency || null,
+        paidAt: new Date(),
         updatedAt: new Date(),
       })
     } else {

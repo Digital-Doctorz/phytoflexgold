@@ -35,6 +35,22 @@ export interface Revision {
 
 export type OrderStatus = "PENDING" | "PAID" | "SHIPPED" | "DELIVERED" | "CANCELLED"
 
+export interface OrderEmail {
+  to: string
+  type: string
+  subject: string
+  sentAt: Date
+  ok: boolean
+  error?: string
+}
+
+export interface OrderShipping {
+  courier?: string
+  trackingNumber?: string
+  shippedAt?: Date
+  deliveredAt?: Date
+}
+
 export interface OrderItem {
   id?: string
   productId: string
@@ -63,7 +79,14 @@ export interface Order {
     orderId: string
     paymentId?: string
     signature?: string
+    method?: string
+    fee?: number
+    currency?: string
   }
+  shipping?: OrderShipping
+  paidAt?: Date
+  cancelledAt?: Date
+  emails?: OrderEmail[]
   createdAt: Date
   updatedAt?: Date
 }
