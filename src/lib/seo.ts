@@ -1,4 +1,4 @@
-export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://phytoflexgold.vercel.app"
+export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.phytoflexgold.com"
 
 export const ORGANIZATION = {
   name: "Liquid Health",

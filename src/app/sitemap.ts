@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next"
 import { getAllSlugs } from "./(shop)/blog/[slug]/data"
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://phytoflexgold.vercel.app"
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.phytoflexgold.com"
 
 const PRODUCT_IMAGE = "https://lh3.googleusercontent.com/aida-public/AB6AXuDTqOpEHSIZVvw5PCnvpXM_uNUFC7Guyvy31zsWX8sGFPNRcoNPEEIgqTuR8o04qMKmaHa2JsVfKqVkBw1TMgr4IoyeD0ab8CZrclCE8VGMjlrZCnzElfqCxf9ZGkCkPpAhUsoH6sNdcc6WAnSNwtJXciqzOoIJ74KJ_2zKI9sQPzSGMuJ5t3mZIdoszGUQwEnzKl_YeeysAjWodwXmh9mlIpmcILW4PJHSufeA10SVVVZlI75W0cmF1DxqXo4a4uUXQ5zW-rPn4jkBpg"
 

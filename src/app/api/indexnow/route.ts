@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { NextRequest } from "next/server"
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://phytoflexgold.vercel.app"
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.phytoflexgold.com"
 const INDEXNOW_KEY = process.env.INDEXNOW_KEY || ""
 
 async function submitToIndexNow(urls: string[]): Promise<{ success: boolean; error?: string }> {
