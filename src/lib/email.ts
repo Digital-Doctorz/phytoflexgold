@@ -178,8 +178,18 @@ export async function sendEmail(opts: {
     return { ok: false, skipped: true, error: "No email provider configured (RESEND_API_KEY or SMTP_*) " }
   }
 
-  // Prefer Resend; fall back to SMTP.
+  // Prefer SMTP; fall back to Resend.
   try {
+    if (smtpConfigured()) {
+      const info = await getTransporter().sendMail({
+        from: process.env.SMTP_FROM || process.env.SMTP_USER || "PhytoFlex Gold <onboarding@resend.dev>",
+        to: opts.to,
+        subject: opts.subject,
+        html: opts.html,
+      })
+      return { ok: true, messageId: info.messageId }
+    }
+
     if (resendConfigured()) {
       const sender = process.env.RESEND_FROM || "PhytoFlex Gold <onboarding@resend.dev>"
       const { data, error } = await getResend().emails.send({
@@ -195,13 +205,7 @@ export async function sendEmail(opts: {
       return { ok: true, messageId: data?.id }
     }
 
-    const info = await getTransporter().sendMail({
-      from: process.env.SMTP_FROM || process.env.SMTP_USER || "PhytoFlex Gold <onboarding@resend.dev>",
-      to: opts.to,
-      subject: opts.subject,
-      html: opts.html,
-    })
-    return { ok: true, messageId: info.messageId }
+    return { ok: false, skipped: true, error: "No email provider configured (RESEND_API_KEY or SMTP_*)" }
   } catch (err) {
     const message = err instanceof Error ? err.message : "Unknown email provider error"
     console.error("[email] send failed:", message)
