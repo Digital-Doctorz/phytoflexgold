@@ -109,7 +109,9 @@ export default function AdminProductsPage() {
     try {
       const res = await authFetch("/api/products")
       const data = await res.json()
-      setProducts(data)
+      // Guard against a non-array payload (e.g. an { error } response) so the
+      // page never crashes calling products.map on an object after a create/delete.
+      setProducts(Array.isArray(data) ? data : [])
     } catch (err) {
       console.error(err)
     } finally {

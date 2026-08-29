@@ -10,11 +10,15 @@ export async function GET(request: NextRequest) {
   try {
     const db = getAdminDb()
     const snapshot = await db.collection("users").orderBy("createdAt", "desc").get()
-    const users = snapshot.docs.map((doc) => {
-      const data = serializeFirestoreData(doc.data())
-      delete data.passwordHash
-      return { id: doc.id, uid: doc.id, ...data }
-    })
+    // Only staff/admin accounts are excluded so the Customers page and the
+    // dashboard "Customers" stat count real customers, not admin users.
+    const users = snapshot.docs
+      .map((doc) => {
+        const data = serializeFirestoreData(doc.data()) as Record<string, unknown>
+        delete data.passwordHash
+        return { id: doc.id, uid: doc.id, ...data }
+      })
+      .filter((u) => ((u as { role?: string }).role || "CUSTOMER") !== "ADMIN")
     return NextResponse.json(users)
   } catch (error) {
     console.error("Error fetching customers:", error)

@@ -14,21 +14,22 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get("limit") || "20", 10)
 
     const db = getAdminDb()
-    let query: FirebaseFirestore.Query = db.collection("revisions").orderBy("createdAt", "desc")
-
-    if (entityType) {
-      query = query.where("entityType", "==", entityType)
-    }
-    if (entityId) {
-      query = query.where("entityId", "==", entityId)
-    }
-
-    query = query.limit(limit)
-    const snapshot = await query.get()
-    const revisions = snapshot.docs.map((doc) => ({
-      id: doc.id,
-      ...serializeFirestoreData(doc.data()),
-    }))
+    // Use only a single-field orderBy so we never require a composite Firestore
+    // index (entityType + entityId + createdAt). A missing composite index used
+    // to return 500 and break the Revision History panel on the Products and
+    // Settings pages, the same bug class previously fixed for /api/orders.
+    const snapshot = await db.collection("revisions").orderBy("createdAt", "desc").get()
+    const revisions = snapshot.docs
+      .map((doc) => {
+        const data = serializeFirestoreData(doc.data())
+        return { id: doc.id, ...data }
+      })
+      .filter(
+        (rev) =>
+          (!entityType || (rev as { entityType?: string }).entityType === entityType) &&
+          (!entityId || (rev as { entityId?: string }).entityId === entityId)
+      )
+      .slice(0, limit)
 
     return NextResponse.json(revisions)
   } catch (error) {
