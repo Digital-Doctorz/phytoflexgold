@@ -21,8 +21,12 @@ export default function DispatchPage() {
     try {
       const res = await authFetch("/api/orders?status=PAID")
       const data = await res.json()
-      setOrders(data)
+      // Guard against a non-array payload (e.g. an { error } response) so the
+      // page never crashes calling orders.map on an object.
+      setOrders(Array.isArray(data) ? data : [])
+      setError(Array.isArray(data) ? "" : "Failed to load the dispatch queue")
     } catch {
+      setOrders([])
       setError("Failed to load the dispatch queue")
     } finally {
       setLoading(false)
@@ -35,9 +39,13 @@ export default function DispatchPage() {
       try {
         const res = await authFetch("/api/orders?status=PAID")
         const data = await res.json()
-        if (!cancelled) setOrders(data)
+        if (!cancelled) setOrders(Array.isArray(data) ? data : [])
+        if (!cancelled && !Array.isArray(data)) setError("Failed to load the dispatch queue")
       } catch {
-        if (!cancelled) setError("Failed to load the dispatch queue")
+        if (!cancelled) {
+          setOrders([])
+          setError("Failed to load the dispatch queue")
+        }
       } finally {
         if (!cancelled) setLoading(false)
       }

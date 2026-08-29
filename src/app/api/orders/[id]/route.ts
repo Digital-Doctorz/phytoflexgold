@@ -34,6 +34,7 @@ export async function PATCH(
     }
 
     const order = orderSnap.data()! as Order
+    order.id = orderSnap.id
     const currentStatus = order.status || "PENDING"
 
     const update: Record<string, unknown> = { updatedAt: new Date() }

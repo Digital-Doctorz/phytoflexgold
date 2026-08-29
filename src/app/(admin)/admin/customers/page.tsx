@@ -19,7 +19,7 @@ export default function AdminCustomersPage() {
       try {
         const res = await authFetch("/api/customers")
         const data = await res.json()
-        setCustomers(data)
+        setCustomers(Array.isArray(data) ? data : [])
       } catch (err) {
         console.error(err)
       } finally {

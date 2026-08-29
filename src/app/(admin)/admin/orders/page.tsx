@@ -25,7 +25,7 @@ export default function AdminOrdersPage() {
         if (statusFilter) params.set("status", statusFilter)
         const res = await authFetch(`/api/orders?${params}`)
         const data = await res.json()
-        if (!cancelled) setOrders(data)
+        if (!cancelled) setOrders(Array.isArray(data) ? data : [])
       } catch (err) {
         console.error(err)
       } finally {
@@ -72,7 +72,8 @@ export default function AdminOrdersPage() {
       const params = new URLSearchParams()
       if (statusFilter) params.set("status", statusFilter)
       const res = await authFetch(`/api/orders?${params}`)
-      setOrders(await res.json())
+      const data = await res.json()
+      setOrders(Array.isArray(data) ? data : [])
     } catch (err) {
       console.error(err)
     }

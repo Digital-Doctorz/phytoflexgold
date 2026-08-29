@@ -13,12 +13,19 @@ export async function GET(request: NextRequest) {
     const status = searchParams.get("status")
 
     const db = getAdminDb()
-    let query: FirebaseFirestore.Query = db.collection("orders").orderBy("createdAt", "desc")
-    if (status) {
-      query = query.where("status", "==", status)
-    }
+    // Filter by status in-memory rather than with .where() so we never require a
+    // composite Firestore index (status + createdAt). A missing composite index
+    // used to return a 500, which crashed the client with "orders.map is not a
+    // function". Fetching the full list and filtering here is robust and cheap.
+    const query = db.collection("orders").orderBy("createdAt", "desc")
     const snapshot = await query.get()
-    const orders = snapshot.docs.map((doc) => ({ id: doc.id, ...serializeFirestoreData(doc.data()) }))
+    let orders: { id: string; status?: string }[] = snapshot.docs.map((doc) => ({
+      id: doc.id,
+      ...serializeFirestoreData(doc.data()),
+    }))
+    if (status) {
+      orders = orders.filter((o) => o.status === status)
+    }
     return NextResponse.json(orders)
   } catch (error) {
     console.error("Error fetching orders:", error)

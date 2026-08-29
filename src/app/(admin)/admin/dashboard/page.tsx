@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -54,72 +54,80 @@ export default function DashboardPage() {
   const [data, setData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
 
-  const loadData = useCallback(async (isInitial = false) => {
-    if (isInitial) setLoading(true)
-    try {
-      const [ordersRes, productsRes, customersRes] = await Promise.all([
-        authFetch("/api/orders"),
-        authFetch("/api/products"),
-        authFetch("/api/customers"),
-      ])
-      const orders = await ordersRes.json()
-      const products = await productsRes.json()
-      const customers = await customersRes.json()
-
-      const totalSales = orders
-        .filter((o: RecentOrder) => o.status === "PAID" || o.status === "DELIVERED")
-        .reduce((sum: number, o: RecentOrder) => sum + (o.total || 0), 0)
-
-      const salesByDayMap: Record<string, number> = {}
-      orders.forEach((o: RecentOrder) => {
-        if (o.status === "PAID" || o.status === "DELIVERED") {
-          const iso = safeDateString(o.createdAt)
-          if (!iso) return
-          const date = iso.split("T")[0]
-          salesByDayMap[date] = (salesByDayMap[date] || 0) + (o.total || 0)
-        }
-      })
-      const salesByDay = Object.entries(salesByDayMap)
-        .map(([date, sales]) => ({ date, sales }))
-        .sort((a, b) => a.date.localeCompare(b.date))
-        .slice(-30)
-
-      const statusCounts: Record<string, number> = {}
-      orders.forEach((o: RecentOrder) => {
-        statusCounts[o.status] = (statusCounts[o.status] || 0) + 1
-      })
-
-      setData({
-        totalSales,
-        orderCount: orders.length,
-        customerCount: customers.length,
-        productCount: products.length,
-        pendingDispatch: orders.filter((o: RecentOrder) => o.status === "PAID").length,
-        statusCounts,
-        recentOrders: orders.slice(0, 5),
-        dispatchQueue: orders.filter((o: RecentOrder) => o.status === "PAID").slice(0, 5),
-        salesByDay,
-      })
-    } catch (err) {
-      console.error(err)
-    } finally {
-      setLoading(false)
-    }
-  }, [])
-
   useEffect(() => {
-    void loadData(true)
+    let cancelled = false
 
-    const focusHandler = () => void loadData()
-    const interval = window.setInterval(() => void loadData(), 30000)
+    async function load() {
+      try {
+        const [ordersRes, productsRes, customersRes] = await Promise.all([
+          authFetch("/api/orders"),
+          authFetch("/api/products"),
+          authFetch("/api/customers"),
+        ])
+        const [ordersData, productsData, customersData] = await Promise.all([
+          ordersRes.json(),
+          productsRes.json(),
+          customersRes.json(),
+        ])
+        const orders: RecentOrder[] = Array.isArray(ordersData) ? ordersData : []
+        const products: unknown[] = Array.isArray(productsData) ? productsData : []
+        const customers: unknown[] = Array.isArray(customersData) ? customersData : []
+
+        const totalSales = orders
+          .filter((o: RecentOrder) => o.status === "PAID" || o.status === "DELIVERED")
+          .reduce((sum: number, o: RecentOrder) => sum + (o.total || 0), 0)
+
+        const salesByDayMap: Record<string, number> = {}
+        orders.forEach((o: RecentOrder) => {
+          if (o.status === "PAID" || o.status === "DELIVERED") {
+            const iso = safeDateString(o.createdAt)
+            if (!iso) return
+            const date = iso.split("T")[0]
+            salesByDayMap[date] = (salesByDayMap[date] || 0) + (o.total || 0)
+          }
+        })
+        const salesByDay = Object.entries(salesByDayMap)
+          .map(([date, sales]) => ({ date, sales }))
+          .sort((a, b) => a.date.localeCompare(b.date))
+          .slice(-30)
+
+        const statusCounts: Record<string, number> = {}
+        orders.forEach((o: RecentOrder) => {
+          statusCounts[o.status] = (statusCounts[o.status] || 0) + 1
+        })
+
+        if (cancelled) return
+        setData({
+          totalSales,
+          orderCount: orders.length,
+          customerCount: customers.length,
+          productCount: products.length,
+          pendingDispatch: orders.filter((o: RecentOrder) => o.status === "PAID").length,
+          statusCounts,
+          recentOrders: orders.slice(0, 5),
+          dispatchQueue: orders.filter((o: RecentOrder) => o.status === "PAID").slice(0, 5),
+          salesByDay,
+        })
+      } catch (err) {
+        console.error(err)
+      } finally {
+        if (!cancelled) setLoading(false)
+      }
+    }
+
+    void load()
+
+    const focusHandler = () => void load()
+    const interval = window.setInterval(() => void load(), 30000)
     window.addEventListener("focus", focusHandler)
     document.addEventListener("visibilitychange", focusHandler)
     return () => {
+      cancelled = true
       window.clearInterval(interval)
       window.removeEventListener("focus", focusHandler)
       document.removeEventListener("visibilitychange", focusHandler)
     }
-  }, [loadData])
+  }, [])
 
   if (loading) {
     return (
