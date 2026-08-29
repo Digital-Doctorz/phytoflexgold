@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Badge } from "@/components/ui/badge"
-import { formatPrice } from "@/lib/utils"
+import { formatDateTime, formatPrice } from "@/lib/utils"
 import { authFetch } from "@/lib/auth-client"
 import { Plus, Pencil, Trash2, Save, Clock, AlertTriangle, RotateCcw, ChevronDown, ChevronUp } from "lucide-react"
 import type { Product, PricingTier, Revision } from "@/types"
@@ -74,7 +74,7 @@ function RevisionHistory({ entityType, entityId }: { entityType: string; entityI
                     {rev.action === "create" ? "Created" : rev.action === "delete" ? "Deleted" : "Updated"}
                   </span>
                   <span className="text-on-surface-variant">
-                    {new Date(rev.createdAt).toLocaleString()}
+                    {formatDateTime(rev.createdAt)}
                   </span>
                 </div>
                 {rev.changedFields && rev.changedFields.length > 0 && (

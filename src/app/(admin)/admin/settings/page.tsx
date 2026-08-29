@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { authFetch } from "@/lib/auth-client"
+import { formatDateTime } from "@/lib/utils"
 import { AlertTriangle, RotateCcw, Clock, ChevronDown, ChevronUp } from "lucide-react"
 import type { Revision } from "@/types"
 
@@ -70,7 +71,7 @@ function RevisionHistory() {
                     {rev.action === "create" ? "Created" : rev.action === "delete" ? "Deleted" : "Updated"}
                   </span>
                   <span className="text-on-surface-variant">
-                    {new Date(rev.createdAt).toLocaleString()}
+                    {formatDateTime(rev.createdAt)}
                   </span>
                 </div>
                 {rev.changedFields && rev.changedFields.length > 0 && (
