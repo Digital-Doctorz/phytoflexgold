@@ -15,9 +15,19 @@ import type { OrderStatus } from "@/types"
 interface RecentOrder {
   id: string
   email?: string
-  createdAt: string | number
+  createdAt: string | number | { _seconds?: number; _nanoseconds?: number } | null
   total: number
   status: string
+}
+
+function safeDateString(raw: string | number | { _seconds?: number; _nanoseconds?: number } | null): string {
+  if (raw == null) return ""
+  if (typeof raw === "string") return raw
+  if (typeof raw === "number") return new Date(raw).toISOString()
+  if (typeof raw === "object" && typeof raw._seconds === "number") {
+    return new Date(raw._seconds * 1000).toISOString()
+  }
+  return ""
 }
 
 interface DashboardData {
@@ -63,13 +73,10 @@ export default function DashboardPage() {
         const salesByDayMap: Record<string, number> = {}
         orders.forEach((o: RecentOrder) => {
           if (o.status === "PAID" || o.status === "DELIVERED") {
-            try {
-              const dateStr = typeof o.createdAt === "string" ? o.createdAt : new Date(o.createdAt).toISOString().split("T")[0]
-              const date = dateStr.split("T")[0]
-              salesByDayMap[date] = (salesByDayMap[date] || 0) + (o.total || 0)
-            } catch {
-              // skip orders with invalid dates
-            }
+            const iso = safeDateString(o.createdAt)
+            if (!iso) return
+            const date = iso.split("T")[0]
+            salesByDayMap[date] = (salesByDayMap[date] || 0) + (o.total || 0)
           }
         })
         const salesByDay = Object.entries(salesByDayMap)
@@ -249,7 +256,7 @@ export default function DashboardPage() {
                   <div key={order.id} className="flex items-center justify-between py-2 border-b border-outline-variant/10 last:border-0">
                     <div>
                       <p className="font-bold text-sm">{order.email || "Guest"}</p>
-                      <p className="text-xs text-on-surface-variant">{formatDate(typeof order.createdAt === "string" ? order.createdAt : new Date(order.createdAt).toISOString())}</p>
+                      <p className="text-xs text-on-surface-variant">{formatDate(safeDateString(order.createdAt))}</p>
                     </div>
                     <div className="text-right">
                       <p className="font-bold">{formatPrice(order.total || 0)}</p>
