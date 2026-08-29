@@ -116,7 +116,7 @@ export async function PATCH(
         subject,
         sentAt: new Date(),
         ok: result.ok,
-        error: result.error,
+        ...(result.error ? { error: result.error } : {}),
       })
       await orderRef.update({ emails: history, updatedAt: new Date() })
     }

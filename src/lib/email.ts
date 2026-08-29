@@ -1,5 +1,6 @@
 import "server-only"
 import nodemailer from "nodemailer"
+import { Resend } from "resend"
 import type { Order, OrderStatus } from "@/types"
 
 interface EmailResult {
@@ -9,12 +10,22 @@ interface EmailResult {
   messageId?: string
 }
 
-function isConfigured(): boolean {
+function isEnabled(): boolean {
+  return process.env.EMAIL_ENABLED === "true"
+}
+
+function resendConfigured(): boolean {
+  return Boolean(process.env.RESEND_API_KEY)
+}
+
+function smtpConfigured(): boolean {
   return Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS)
 }
 
-function fromAddress(): string {
-  return process.env.SMTP_FROM || process.env.SMTP_USER || "PhytoFlex Gold <onboarding@resend.dev>"
+let resendClient: Resend | null = null
+function getResend(): Resend {
+  if (!resendClient) resendClient = new Resend(process.env.RESEND_API_KEY)
+  return resendClient
 }
 
 let transporter: ReturnType<typeof nodemailer.createTransport> | null = null
@@ -159,24 +170,40 @@ export async function sendEmail(opts: {
   if (!opts.to || !opts.to.includes("@")) {
     return { ok: false, error: "No valid recipient email on this order" }
   }
-  if (!process.env.EMAIL_ENABLED) {
-    return { ok: false, skipped: true, error: "Emails are disabled (EMAIL_ENABLED not set)" }
+  if (!isEnabled()) {
+    return { ok: false, skipped: true, error: "Emails are disabled (EMAIL_ENABLED not set to true)" }
   }
-  if (!isConfigured()) {
-    console.warn(`[email] SMTP not configured; skipping "${opts.subject}" to ${opts.to}`)
-    return { ok: false, skipped: true, error: "SMTP not configured" }
+  if (!resendConfigured() && !smtpConfigured()) {
+    console.warn(`[email] No provider configured; skipping "${opts.subject}" to ${opts.to}`)
+    return { ok: false, skipped: true, error: "No email provider configured (RESEND_API_KEY or SMTP_*) " }
   }
 
+  // Prefer Resend; fall back to SMTP.
   try {
+    if (resendConfigured()) {
+      const sender = process.env.RESEND_FROM || "PhytoFlex Gold <onboarding@resend.dev>"
+      const { data, error } = await getResend().emails.send({
+        from: sender,
+        to: opts.to,
+        subject: opts.subject,
+        html: opts.html,
+      })
+      if (error) {
+        console.error("[email] Resend send failed:", error.message, error.name)
+        return { ok: false, error: error.name + ": " + error.message }
+      }
+      return { ok: true, messageId: data?.id }
+    }
+
     const info = await getTransporter().sendMail({
-      from: fromAddress(),
+      from: process.env.SMTP_FROM || process.env.SMTP_USER || "PhytoFlex Gold <onboarding@resend.dev>",
       to: opts.to,
       subject: opts.subject,
       html: opts.html,
     })
     return { ok: true, messageId: info.messageId }
   } catch (err) {
-    const message = err instanceof Error ? err.message : "Unknown SMTP error"
+    const message = err instanceof Error ? err.message : "Unknown email provider error"
     console.error("[email] send failed:", message)
     return { ok: false, error: message }
   }

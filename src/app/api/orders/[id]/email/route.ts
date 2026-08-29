@@ -34,6 +34,7 @@ export async function POST(
     }
 
     const order = orderSnap.data()! as Order
+    order.id = orderSnap.id
     const recipient = order.email
     if (!recipient || !recipient.includes("@")) {
       return NextResponse.json(
@@ -63,7 +64,7 @@ export async function POST(
       subject,
       sentAt: new Date(),
       ok: result.ok,
-      error: result.error,
+      ...(result.error ? { error: result.error } : {}),
     })
     await orderRef.update({ emails: history, updatedAt: new Date() })
 
