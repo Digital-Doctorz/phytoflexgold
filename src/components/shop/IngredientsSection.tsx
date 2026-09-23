@@ -30,20 +30,20 @@ const foundations = [
 
 export function IngredientsSection() {
   return (
-    <section className="py-32 bg-surface-container-low" id="ingredients" aria-labelledby="ingredients-heading">
+    <section className="py-20 md:py-32 bg-surface-container-low scroll-mt-20" id="ingredients" aria-labelledby="ingredients-heading">
       <div className="max-w-container-max mx-auto px-margin-mobile md:px-gutter-md">
         {/* Header */}
-        <div className="text-center max-w-3xl mx-auto mb-24">
+        <div className="text-center max-w-3xl mx-auto mb-14 md:mb-24">
           <p className="text-label-md font-semibold text-primary-container uppercase tracking-widest mb-4">
             CURATED FORMULATION
           </p>
           <h2
             id="ingredients-heading"
-            className="text-display-sm md:text-display-lg font-extrabold leading-tight mb-6"
+            className="text-4xl sm:text-display-sm md:text-display-lg font-extrabold leading-[1.05] mb-5 sm:mb-6 text-balance"
           >
             The Alchemy of Pure <span className="text-secondary italic">Botanical</span> Precision
           </h2>
-          <p className="text-body-lg text-on-surface-variant leading-relaxed">
+          <p className="text-body-md sm:text-body-lg text-on-surface-variant leading-relaxed">
             PhytoFlex Gold is a masterwork of molecular engineering. By targeting
             10 critical joint health biomarkers, we&apos;ve created an ecosystem of
             recovery powered by clinical-grade extractions.
@@ -51,11 +51,11 @@ export function IngredientsSection() {
         </div>
 
         {/* Ingredient Cards */}
-        <div className="space-y-40">
+        <div className="space-y-20 md:space-y-40">
           {ingredients.map((ing, i) => (
             <article
               key={ing.name}
-              className={`grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-16 items-center ${i % 2 === 1 ? "lg:direction-rtl" : ""}`}
+              className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center ${i % 2 === 1 ? "lg:direction-rtl" : ""}`}
             >
               <div className={`overflow-hidden rounded-2xl shadow-2xl ${i % 2 === 1 ? "lg:order-2" : ""}`}>
                 <Image
@@ -70,8 +70,8 @@ export function IngredientsSection() {
               </div>
               <div className={i % 2 === 1 ? "lg:order-1 lg:text-right" : ""}>
                 <p className={`text-label-md font-semibold ${ing.color} uppercase tracking-widest mb-3`}>{ing.tag}</p>
-                <h3 className="text-headline-lg font-bold mb-4">{ing.name}</h3>
-                <p className="text-body-lg text-on-surface-variant mb-8 leading-relaxed">{ing.desc}</p>
+                <h3 className="text-2xl sm:text-headline-lg font-bold mb-4">{ing.name}</h3>
+                <p className="text-body-md sm:text-body-lg text-on-surface-variant mb-6 sm:mb-8 leading-relaxed">{ing.desc}</p>
                 <div className={`space-y-4 ${i % 2 === 1 ? "flex flex-col items-end" : ""}`}>
                   {ing.points.map((point, pi) => (
                     <div
@@ -89,10 +89,10 @@ export function IngredientsSection() {
         </div>
 
         {/* Gallery Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-40">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 mt-20 md:mt-40">
           {gallery.map((item) => (
             <article key={item.name}>
-              <div className="aspect-square overflow-hidden rounded-2xl mb-6">
+              <div className="aspect-square overflow-hidden rounded-2xl mb-5 sm:mb-6">
                 <Image
                   alt={`${item.name} - botanical ingredient in PhytoFlex Gold supplement`}
                   className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
@@ -103,16 +103,16 @@ export function IngredientsSection() {
                   unoptimized
                 />
               </div>
-              <h3 className="text-headline-md font-bold mb-2">{item.name}</h3>
+              <h3 className="text-xl sm:text-headline-md font-bold mb-2">{item.name}</h3>
               <p className="text-body-md text-on-surface-variant leading-relaxed">{item.desc}</p>
             </article>
           ))}
         </div>
 
         {/* Bone & Resilience Row */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mt-40">
-          <article className="flex gap-6 items-start bg-surface-container-lowest p-8 rounded-2xl border border-white/5">
-            <div className="w-28 h-28 rounded-full shrink-0 overflow-hidden border-2 border-primary-container shadow-lg">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8 mt-20 md:mt-40">
+          <article className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start bg-surface-container-lowest p-6 sm:p-8 rounded-2xl border border-white/5">
+            <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-full shrink-0 overflow-hidden border-2 border-primary-container shadow-lg">
               <Image
                 alt="Hadjod - bone-setting herb for connective tissue healing"
                 className="w-full h-full object-cover"
@@ -124,14 +124,14 @@ export function IngredientsSection() {
               />
             </div>
             <div>
-              <h3 className="text-headline-md font-bold text-primary-container mb-3">Hadjod</h3>
+              <h3 className="text-xl sm:text-headline-md font-bold text-primary-container mb-3">Hadjod</h3>
               <p className="text-body-md text-on-surface-variant leading-relaxed">
                 The legendary &apos;Bone-Setter&apos; herb. Accelerates the healing of connective tissues and optimizes calcium absorption within the skeletal matrix for long-term density.
               </p>
             </div>
           </article>
-          <article className="flex gap-6 items-start bg-surface-container-lowest p-8 rounded-2xl border border-white/5">
-            <div className="w-28 h-28 rounded-full shrink-0 overflow-hidden border-2 border-secondary shadow-lg">
+          <article className="flex flex-col sm:flex-row gap-4 sm:gap-6 items-start bg-surface-container-lowest p-6 sm:p-8 rounded-2xl border border-white/5">
+            <div className="w-20 h-20 sm:w-28 sm:h-28 rounded-full shrink-0 overflow-hidden border-2 border-secondary shadow-lg">
               <Image
                 alt="Fenugreek - metabolic catalyst for enhanced bioavailability"
                 className="w-full h-full object-cover"
@@ -143,7 +143,7 @@ export function IngredientsSection() {
               />
             </div>
             <div>
-              <h3 className="text-headline-md font-bold text-secondary mb-3">Fenugreek</h3>
+              <h3 className="text-xl sm:text-headline-md font-bold text-secondary mb-3">Fenugreek</h3>
               <p className="text-body-md text-on-surface-variant leading-relaxed">
                 A metabolic catalyst providing anti-inflammatory support while significantly enhancing the bioavailability of other bio-active compounds in the formula.
               </p>
@@ -152,7 +152,7 @@ export function IngredientsSection() {
         </div>
 
         {/* Foundations Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 bg-surface-container-lowest/60 p-10 rounded-3xl border border-white/5 mt-40">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 sm:gap-8 bg-surface-container-lowest/60 p-6 sm:p-10 rounded-3xl border border-white/5 mt-20 md:mt-40">
           {foundations.map((item) => (
             <article key={item.name} className="text-center">
               <div className="w-20 h-20 mx-auto mb-5 rounded-2xl overflow-hidden shadow-lg grayscale hover:grayscale-0 transition-all duration-500">
@@ -166,7 +166,7 @@ export function IngredientsSection() {
                   unoptimized
                 />
               </div>
-              <h4 className="text-headline-md font-bold mb-2">{item.name}</h4>
+              <h4 className="text-lg sm:text-headline-md font-bold mb-2">{item.name}</h4>
               <p className="text-body-md text-on-surface-variant leading-relaxed">{item.desc}</p>
             </article>
           ))}

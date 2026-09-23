@@ -1,9 +1,8 @@
 import type { MetadataRoute } from "next"
-import { getAllSlugs } from "./(shop)/blog/[slug]/data"
+import { SITE_URL, PRODUCT_IMAGE_URL } from "@/lib/seo"
+import { getAllSlugs, getPost } from "./(shop)/blog/[slug]/data"
 
-const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://www.phytoflexgold.com"
-
-const PRODUCT_IMAGE = "https://lh3.googleusercontent.com/aida-public/AB6AXuDTqOpEHSIZVvw5PCnvpXM_uNUFC7Guyvy31zsWX8sGFPNRcoNPEEIgqTuR8o04qMKmaHa2JsVfKqVkBw1TMgr4IoyeD0ab8CZrclCE8VGMjlrZCnzElfqCxf9ZGkCkPpAhUsoH6sNdcc6WAnSNwtJXciqzOoIJ74KJ_2zKI9sQPzSGMuJ5t3mZIdoszGUQwEnzKl_YeeysAjWodwXmh9mlIpmcILW4PJHSufeA10SVVVZlI75W0cmF1DxqXo4a4uUXQ5zW-rPn4jkBpg"
+const siteUrl = SITE_URL
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const blogSlugs = getAllSlugs()
@@ -14,7 +13,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
       lastModified: new Date(),
       changeFrequency: "weekly",
       priority: 1,
-      images: [PRODUCT_IMAGE],
+      images: [PRODUCT_IMAGE_URL],
     },
     {
       url: `${siteUrl}/privacy`,
@@ -60,12 +59,16 @@ export default function sitemap(): MetadataRoute.Sitemap {
     },
   ]
 
-  const blogPages: MetadataRoute.Sitemap = blogSlugs.map((slug) => ({
-    url: `${siteUrl}/blog/${slug}`,
-    lastModified: new Date(),
-    changeFrequency: "monthly" as const,
-    priority: 0.6,
-  }))
+  const blogPages: MetadataRoute.Sitemap = blogSlugs.map((slug) => {
+    const post = getPost(slug)
+    return {
+      url: `${siteUrl}/blog/${slug}`,
+      lastModified: post ? new Date(post.date) : new Date(),
+      changeFrequency: "monthly" as const,
+      priority: 0.6,
+      images: [PRODUCT_IMAGE_URL],
+    }
+  })
 
   return [...staticPages, ...blogPages]
 }

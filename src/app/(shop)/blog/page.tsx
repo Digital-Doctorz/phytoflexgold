@@ -1,6 +1,7 @@
 import Link from "next/link"
 import type { Metadata } from "next"
 import { SITE_URL, buildBreadcrumbSchema } from "@/lib/seo"
+import { posts as allPosts } from "./[slug]/data"
 
 export const metadata: Metadata = {
   title: "Blog | PhytoFlex Gold",
@@ -31,56 +32,50 @@ export const metadata: Metadata = {
   },
 }
 
-const posts = [
-  {
-    slug: "turmeric-curcumin-joint-health",
-    title: "Turmeric & Curcumin: What the Science Says About Joint Health",
-    excerpt:
-      "Curcumin, the active compound in turmeric, has been studied extensively for its anti-inflammatory effects. Here's what 50+ clinical trials reveal about joint health.",
-    date: "January 15, 2024",
-    readTime: "8 min read",
-    category: "Ingredients",
-  },
-  {
-    slug: "boswellia-serrata-inflammation",
-    title: "Boswellia Serrata: India's Ancient Anti-Inflammatory Secret",
-    excerpt:
-      "For centuries, Boswellia has been used in Ayurvedic medicine. Modern research now confirms its powerful effects on joint comfort and mobility.",
-    date: "January 8, 2024",
-    readTime: "6 min read",
-    category: "Ingredients",
-  },
-  {
-    slug: "liquid-supplements-absorption",
-    title: "Liquid vs Capsule Supplements: Why Absorption Matters",
-    excerpt:
-      "Studies show liquid supplements can have up to 98% bioavailability compared to just 20-40% for capsules. Learn why delivery format matters for joint health.",
-    date: "December 28, 2023",
-    readTime: "5 min read",
-    category: "Science",
-  },
-  {
-    slug: "joint-health-exercise-recovery",
-    title: "Joint Health & Exercise Recovery: A Complete Guide",
-    excerpt:
-      "Proper joint nutrition and recovery protocols can reduce exercise-related joint discomfort by up to 60%. Here's how to protect your joints during training.",
-    date: "December 20, 2023",
-    readTime: "10 min read",
-    category: "Wellness",
-  },
-]
+const posts = Object.values(allPosts).map((post) => ({
+  slug: post.slug,
+  title: post.title,
+  excerpt: post.description,
+  date: post.date,
+  readTime: post.readTime,
+  category: post.category,
+}))
 
 export default function BlogIndex() {
   const breadcrumbSchema = buildBreadcrumbSchema([
     { name: "Home", url: SITE_URL },
     { name: "Blog", url: `${SITE_URL}/blog` },
   ])
+  const blogSchema = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    name: "PhytoFlex Gold Blog",
+    description:
+      "Evidence-based articles on joint health, botanical supplements, and natural wellness protocols.",
+    url: `${SITE_URL}/blog`,
+    inLanguage: "en-US",
+    publisher: { "@id": `${SITE_URL}/#organization` },
+    blogPost: posts.map((post) => ({
+      "@type": "BlogPosting",
+      headline: post.title,
+      description: post.excerpt,
+      url: `${SITE_URL}/blog/${post.slug}`,
+      datePublished: new Date(post.date).toISOString(),
+      articleSection: post.category,
+      author: { "@id": `${SITE_URL}/#organization` },
+      publisher: { "@id": `${SITE_URL}/#organization` },
+    })),
+  }
 
   return (
     <main className="bg-background min-h-screen">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbSchema) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(blogSchema) }}
       />
       <section className="max-w-4xl mx-auto px-margin-mobile md:px-gutter-md py-20">
         <header className="mb-12">
@@ -121,7 +116,7 @@ export default function BlogIndex() {
                 </p>
                 <div className="flex items-center justify-between">
                   <time
-                    dateTime={post.date}
+                    dateTime={new Date(post.date).toISOString().slice(0, 10)}
                     className="text-body-sm text-on-surface-variant"
                   >
                     {post.date}

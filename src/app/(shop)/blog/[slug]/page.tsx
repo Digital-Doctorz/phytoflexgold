@@ -23,12 +23,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
     alternates: {
       canonical: `${SITE_URL}/blog/${post.slug}`,
     },
-    openGraph: {
+      openGraph: {
       title: post.title,
       description: post.description,
       url: `${SITE_URL}/blog/${post.slug}`,
       type: "article",
-      publishedTime: post.date,
+      publishedTime: new Date(post.date).toISOString(),
       authors: ["PhytoFlex Gold"],
       tags: [post.category, "joint health", "supplements"],
       images: [
@@ -117,7 +117,7 @@ export default async function BlogArticle({ params }: Props) {
               {post.category}
             </span>
             <time
-              dateTime={post.date}
+              dateTime={new Date(post.date).toISOString().slice(0, 10)}
               className="text-body-sm text-on-surface-variant"
             >
               {post.date}
@@ -170,7 +170,49 @@ export default async function BlogArticle({ params }: Props) {
               )
             }
             if (paragraph.startsWith("|")) {
-              return null
+              const lines = paragraph
+                .split("\n")
+                .map((l) => l.trim())
+                .filter((l) => l.startsWith("|"))
+              const dataRows = lines.filter((l) => !/^[\s|:-]+$/.test(l))
+              const toCells = (line: string) =>
+                line
+                  .replace(/^\|/, "")
+                  .replace(/\|$/, "")
+                  .split("|")
+                  .map((c) => c.trim())
+              const [header, ...body] = dataRows
+              if (!header) return null
+              return (
+                <div key={i} className="overflow-x-auto my-6 -mx-margin-mobile px-margin-mobile">
+                  <table className="w-full text-body-sm sm:text-body-md border-collapse min-w-[400px]">
+                    <thead>
+                      <tr className="border-b border-outline-variant/30">
+                        {toCells(header).map((h, hi) => (
+                          <th
+                            key={hi}
+                            scope="col"
+                            className="py-3 pr-4 text-left font-bold text-on-surface"
+                          >
+                            {h}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {body.map((r, ri) => (
+                        <tr key={ri} className="border-b border-outline-variant/10">
+                          {toCells(r).map((c, ci) => (
+                            <td key={ci} className="py-3 pr-4 text-on-surface-variant">
+                              {c}
+                            </td>
+                          ))}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              )
             }
             if (paragraph.startsWith("---")) {
               return (

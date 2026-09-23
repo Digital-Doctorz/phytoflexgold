@@ -15,46 +15,46 @@ const biomarkers = [
   { icon: Shield, label: "Lox-5", color: "amber", desc: "Targeting alternative inflammatory paths." },
 ]
 
-const colorMap: Record<string, string> = {
-  red: "bg-red-500/10 text-red-500 border-red-500/40",
-  orange: "bg-orange-500/10 text-orange-500 border-orange-500/40",
-  blue: "bg-blue-500/10 text-blue-500 border-blue-500/40",
-  purple: "bg-purple-500/10 text-purple-500 border-purple-500/40",
-  green: "bg-green-500/10 text-green-500 border-green-500/40",
-  yellow: "bg-yellow-500/10 text-yellow-500 border-yellow-500/40",
-  cyan: "bg-cyan-500/10 text-cyan-500 border-cyan-500/40",
-  rose: "bg-rose-500/10 text-rose-500 border-rose-500/40",
-  indigo: "bg-indigo-500/10 text-indigo-500 border-indigo-500/40",
-  amber: "bg-amber-500/10 text-amber-500 border-amber-500/40",
+const iconColorMap: Record<string, string> = {
+  red: "bg-red-500/10 text-red-500",
+  orange: "bg-orange-500/10 text-orange-500",
+  blue: "bg-blue-500/10 text-blue-500",
+  purple: "bg-purple-500/10 text-purple-500",
+  green: "bg-green-500/10 text-green-500",
+  yellow: "bg-yellow-500/10 text-yellow-500",
+  cyan: "bg-cyan-500/10 text-cyan-500",
+  rose: "bg-rose-500/10 text-rose-500",
+  indigo: "bg-indigo-500/10 text-indigo-500",
+  amber: "bg-amber-500/10 text-amber-500",
 }
 
 export function BiomarkersSection() {
   return (
     <section
-      className="py-32 bg-surface-container-lowest"
+      className="py-20 md:py-32 bg-surface-container-lowest scroll-mt-20"
       id="biomarkers"
       aria-labelledby="biomarkers-heading"
     >
       <div className="max-w-container-max mx-auto px-margin-mobile md:px-gutter-md">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12 sm:mb-16">
           <h2
             id="biomarkers-heading"
-            className="text-headline-lg font-headline-lg mb-4"
+            className="text-2xl sm:text-headline-lg font-bold mb-4 text-balance"
           >
             Precision Targeting of <span className="text-primary">10 Key Biomarkers</span>
           </h2>
-          <p className="text-body-lg text-on-surface-variant max-w-2xl mx-auto">
+          <p className="text-body-md sm:text-body-lg text-on-surface-variant max-w-2xl mx-auto">
             PhytoFlex Gold is designed to down-regulate pro-inflammatory markers while up-regulating regenerative enzymes. Each biomarker is targeted by specific botanical extracts in our clinical-grade formula.
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6" role="list">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 sm:gap-6" role="list">
           {biomarkers.map((bio) => (
             <article
               key={bio.label}
-              className={`group bg-surface p-6 rounded-xl border border-outline-variant/10 hover:${colorMap[bio.color]} transition-colors`}
+              className="group bg-surface p-5 sm:p-6 rounded-xl border border-outline-variant/10 hover:border-outline-variant/40 hover:bg-surface-container transition-colors"
               role="listitem"
             >
-              <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${colorMap[bio.color]}`} aria-hidden="true">
+              <div className={`w-12 h-12 rounded-lg flex items-center justify-center mb-4 group-hover:scale-110 transition-transform ${iconColorMap[bio.color]}`} aria-hidden="true">
                 <bio.icon className="w-5 h-5" />
               </div>
               <h4 className="font-bold text-lg mb-2">{bio.label}</h4>

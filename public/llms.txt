@@ -1,12 +1,14 @@
 # PhytoFlex Gold - Clinical-Grade Joint & Mobility Supplement
 
+> PhytoFlex Gold is a clinical-strength liquid botanical supplement with 12 high-altitude extracts, 94% bio-availability, and 98.2% HPLC purity. Made by Liquid Health in Kolkata, India. Official site: https://www.phytoflexgold.com
+
 ## About
-PhytoFlex Gold is a clinical-strength botanical supplement engineered with 12 high-altitude botanical extracts. It is a 94% bio-available liquid formula designed to modulate molecular inflammation and restore joint, nerve, and muscle vitality at a cellular level. Manufactured by Liquid Health Inc., based in New Delhi, India.
+PhytoFlex Gold is a clinical-strength botanical supplement engineered with 12 high-altitude botanical extracts. It is a 94% bio-available liquid formula designed to modulate molecular inflammation and restore joint, nerve, and muscle vitality at a cellular level. Manufactured by Liquid Health, based in Kolkata, India.
 
 ## Product Identity
 - **Full Name:** PhytoFlex Gold
 - **Generic Name:** PhytoFlex Gold Botanical Joint Supplement
-- **Manufacturer:** Liquid Health Inc.
+- **Manufacturer:** Liquid Health
 - **Form:** Liquid supplement (oral)
 - **Volume:** 500ml per bottle
 - **Dosage:** 25ml twice daily (after lunch and dinner)
@@ -64,16 +66,20 @@ PhytoFlex Gold targets 10 key biomarkers of joint inflammation:
 - 3 Month Supply (9 bottles): ₹5,900 (Best Value - 35% Off)
 
 ## Contact & Links
-- **Website:** https://phytoflexgold.vercel.app
-- **Manufacturer:** Liquid Health Inc., New Delhi, India
+- **Website:** https://www.phytoflexgold.com
+- **Manufacturer:** Liquid Health, 8/2A Hazra Road, Kolkata, West Bengal 700021, India
 - **Email:** support@phytoflexgold.com
-- **Phone:** +91-9876543210
+- **Phone:** +91-9555955595
 
 ## See Also
-- https://phytoflexgold.vercel.app/#science - The Molecular Science
-- https://phytoflexgold.vercel.app/#ingredients - Curated Formulation (12 Botanicals)
-- https://phytoflexgold.vercel.app/#benefits - Six Systemic Benefits
-- https://phytoflexgold.vercel.app/#timeline - 12-Week Recovery Timeline
-- https://phytoflexgold.vercel.app/#pricing - Pricing Plans
-- https://phytoflexgold.vercel.app/#faq - Clinical Clarifications
-- https://phytoflexgold.vercel.app/blog - Research Articles
+- https://www.phytoflexgold.com/llms-full.txt - Full product & clinical reference (detailed)
+- https://www.phytoflexgold.com/#science - The Molecular Science
+- https://www.phytoflexgold.com/#ingredients - Curated Formulation (12 Botanicals)
+- https://www.phytoflexgold.com/#benefits - Six Systemic Benefits
+- https://www.phytoflexgold.com/#timeline - 12-Week Recovery Timeline
+- https://www.phytoflexgold.com/#pricing - Pricing Plans
+- https://www.phytoflexgold.com/#faq - Clinical Clarifications
+- https://www.phytoflexgold.com/blog - Research Articles
+- https://www.phytoflexgold.com/shipping - Shipping Policy
+- https://www.phytoflexgold.com/returns - Return & Refund Policy
+- https://www.phytoflexgold.com/disclaimer - Medical Disclaimer

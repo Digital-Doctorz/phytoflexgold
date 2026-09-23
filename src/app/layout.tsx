@@ -77,9 +77,6 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  alternates: {
-    canonical: SITE_URL,
-  },
 }
 
 export default function RootLayout({
@@ -92,6 +89,7 @@ export default function RootLayout({
       <head>
         <meta name="theme-color" content="#121414" />
         <meta name="msapplication-TileColor" content="#121414" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body className={`${hankenGrotesk.variable} font-sans antialiased bg-background text-on-background min-h-screen`}>
         <AuthProvider>{children}</AuthProvider>

@@ -32,16 +32,16 @@ const phases = [
 
 export function TimelineSection() {
   return (
-    <section className="py-16 md:py-32 relative overflow-hidden" id="timeline" aria-labelledby="timeline-heading">
+    <section className="py-16 md:py-32 relative overflow-hidden scroll-mt-20" id="timeline" aria-labelledby="timeline-heading">
       <div className="max-w-3xl mx-auto px-margin-mobile md:px-gutter-md relative">
-        <div className="text-center mb-16 md:mb-24">
+        <div className="text-center mb-12 md:mb-24">
           <h2
             id="timeline-heading"
-            className="text-headline-lg font-headline-lg mb-4"
+            className="text-2xl sm:text-headline-lg font-bold mb-4 text-balance"
           >
             The Recovery Cycle <span className="text-secondary">Timeline</span>
           </h2>
-          <p className="text-on-surface-variant max-w-xl mx-auto">
+          <p className="text-body-md sm:text-body-lg text-on-surface-variant max-w-xl mx-auto">
             A 12-week clinical protocol for systemic mobility restoration. Follow this evidence-based timeline for optimal results.
           </p>
         </div>
@@ -64,14 +64,14 @@ export function TimelineSection() {
                 {phase.week}
               </div>
               <div className="flex-1 min-w-0 pl-5 md:pl-12 md:w-1/2">
-                <h3 className={`font-bold text-2xl ${phase.color} mb-2 md:hidden`}>
+                <h3 className={`font-bold text-lg sm:text-2xl ${phase.color} mb-2 md:hidden`}>
                   {phase.label}
                 </h3>
-                <p className="text-headline-md font-headline-md">{phase.title}</p>
+                <p className="text-lg sm:text-headline-md font-bold">{phase.title}</p>
                 {phase.side === "right" && (
                   <p className="hidden md:block text-on-surface-variant mt-2">{phase.desc}</p>
                 )}
-                <p className="text-on-surface-variant mt-2 md:hidden">{phase.desc}</p>
+                <p className="text-body-sm sm:text-body-md text-on-surface-variant mt-2 md:hidden">{phase.desc}</p>
                 <p className="text-secondary text-body-sm mt-3">{phase.action}</p>
               </div>
             </div>

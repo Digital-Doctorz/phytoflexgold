@@ -1,11 +1,11 @@
 import { ShieldCheck, PackageCheck, Activity, Leaf, Lock } from "lucide-react"
 
 const iconMap: Record<string, React.ReactNode> = {
-  verified_user: <ShieldCheck className="w-8 h-8" aria-hidden="true" />,
-  inventory_2: <PackageCheck className="w-8 h-8" aria-hidden="true" />,
-  health_metrics: <Activity className="w-8 h-8" aria-hidden="true" />,
-  eco: <Leaf className="w-8 h-8" aria-hidden="true" />,
-  security: <Lock className="w-8 h-8" aria-hidden="true" />,
+  verified_user: <ShieldCheck aria-hidden="true" />,
+  inventory_2: <PackageCheck aria-hidden="true" />,
+  health_metrics: <Activity aria-hidden="true" />,
+  eco: <Leaf aria-hidden="true" />,
+  security: <Lock aria-hidden="true" />,
 }
 
 export function TrustBar() {
@@ -18,12 +18,12 @@ export function TrustBar() {
   ]
 
   return (
-    <section className="bg-surface-container-lowest py-10 border-y border-outline-variant/10 overflow-hidden" aria-label="Certifications and trust badges">
+    <section className="bg-surface-container-lowest py-8 sm:py-10 border-y border-outline-variant/10 overflow-hidden" aria-label="Certifications and trust badges">
       <div className="flex whitespace-nowrap animate-scroll" role="list">
         {[...badges, ...badges].map((badge, i) => (
-          <div key={i} className="flex items-center gap-3 px-12 opacity-50 grayscale hover:grayscale-0 transition-all" role="listitem">
+          <div key={i} className="flex items-center gap-2 sm:gap-3 px-6 sm:px-12 opacity-50 grayscale hover:grayscale-0 hover:opacity-100 transition-all [&_svg]:w-6 [&_svg]:h-6 sm:[&_svg]:w-8 sm:[&_svg]:h-8" role="listitem">
             {iconMap[badge.icon]}
-            <span className="font-bold">{badge.label}</span>
+            <span className="font-bold text-sm sm:text-base">{badge.label}</span>
           </div>
         ))}
       </div>

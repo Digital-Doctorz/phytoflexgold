@@ -37,18 +37,18 @@ export function PricingSection({ product }: PricingSectionProps) {
   }
 
   return (
-    <section className="py-32 bg-surface-container-low px-margin-mobile md:px-gutter-md" id="pricing" aria-labelledby="pricing-heading">
+    <section className="py-20 md:py-32 bg-surface-container-low px-margin-mobile md:px-gutter-md scroll-mt-20" id="pricing" aria-labelledby="pricing-heading">
       <div className="max-w-container-max mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12 sm:mb-16">
           <h2
             id="pricing-heading"
-            className="text-display-sm md:text-display-lg leading-tight font-extrabold mb-6"
+            className="text-4xl sm:text-display-sm md:text-display-lg leading-[1.05] font-extrabold mb-5 sm:mb-6 text-balance"
           >
             Choose Your Peak <span className="text-primary-container">Protocol</span>
           </h2>
-          <p className="text-on-surface-variant">Invest in clinical-strength recovery with our flexible subscription models. Each bottle contains 500ml of clinical-grade PhytoFlex Gold.</p>
+          <p className="text-body-md sm:text-body-lg text-on-surface-variant max-w-2xl mx-auto">Invest in clinical-strength recovery with our flexible subscription models. Each bottle contains 500ml of clinical-grade PhytoFlex Gold.</p>
         </div>
-        <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto" role="list">
+        <div className="grid md:grid-cols-3 gap-6 sm:gap-8 max-w-5xl mx-auto" role="list">
           {product.tiers.map((tier) => {
             const inCart = items.some(
               (i) => i.productId === product.id && i.tier.label === tier.label
@@ -60,9 +60,9 @@ export function PricingSection({ product }: PricingSectionProps) {
             return (
               <article
                 key={tier.label}
-                className={`p-8 rounded-2xl flex flex-col relative ${isPopular
-                  ? "bg-surface-container-high border-2 border-primary-container transform md:scale-105 shadow-2xl"
-                  : "bg-background border border-outline-variant/20"
+                className={`p-6 sm:p-8 rounded-2xl flex flex-col relative transition-all hover:-translate-y-1 ${isPopular
+                  ? "bg-surface-container-high border-2 border-primary-container md:scale-105 shadow-2xl"
+                  : "bg-background border border-outline-variant/20 hover:border-outline-variant/40"
                 }`}
                 role="listitem"
                 aria-label={`${tier.label} supply plan at ${formatPrice(tier.price)}`}

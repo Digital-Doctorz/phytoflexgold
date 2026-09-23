@@ -35,7 +35,7 @@ const faqs = [
   {
     question: "How long does shipping take?",
     answer:
-      "Standard shipping takes 5–7 business days across India. Metro cities (Delhi, Mumbai, Bangalore, Chennai, Kolkata) typically receive orders within 3–5 business days. Remote areas may take 7–10 business days.",
+      "Standard shipping takes 3–7 business days across India. Metro cities (Delhi, Mumbai, Bangalore, Chennai, Kolkata) typically receive orders within 3–5 business days. Remote areas may take 7–10 business days.",
   },
   {
     question: "Is there free shipping?",

@@ -1,10 +1,12 @@
 export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.phytoflexgold.com"
+export const PRODUCT_IMAGE_URL = `${SITE_URL}/product-phytoflex-gold.png`
+export const ORG_LOGO_URL = `${SITE_URL}/opengraph-image`
 
 export const ORGANIZATION = {
   name: "Liquid Health",
   legalName: "Liquid Health",
   url: SITE_URL,
-  logo: `${SITE_URL}/logo.png`,
+  logo: ORG_LOGO_URL,
   description: "Makers of PhytoFlex Gold, a clinical-strength botanical supplement engineered with 12 high-altitude botanical extracts for joint, nerve, and muscle vitality.",
   email: "support@phytoflexgold.com",
   phone: "+91-9555955595",
@@ -33,13 +35,14 @@ export const ORGANIZATION = {
   },
 } as const
 
-export const PRODUCT_IMAGE_URL = "https://lh3.googleusercontent.com/aida-public/AB6AXuDTqOpEHSIZVvw5PCnvpXM_uNUFC7Guyvy31zsWX8sGFPNRcoNPEEIgqTuR8o04qMKmaHa2JsVfKqVkBw1TMgr4IoyeD0ab8CZrclCE8VGMjlrZCnzElfqCxf9ZGkCkPpAhUsoH6sNdcc6WAnSNwtJXciqzOoIJ74KJ_2zKI9sQPzSGMuJ5t3mZIdoszGUQwEnzKl_YeeysAjWodwXmh9mlIpmcILW4PJHSufeA10SVVVZlI75W0cmF1DxqXo4a4uUXQ5zW-rPn4jkBpg"
-
 export function buildOrganizationSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": `${SITE_URL}/#organization`,
     ...ORGANIZATION,
+    logo: ORG_LOGO_URL,
+    image: [PRODUCT_IMAGE_URL, ORG_LOGO_URL],
   }
 }
 
@@ -47,12 +50,12 @@ export function buildWebSiteSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: ORGANIZATION.name,
+    name: "PhytoFlex Gold",
+    description: ORGANIZATION.description,
     url: SITE_URL,
-    potentialAction: {
-      "@type": "SearchAction",
-      target: `${SITE_URL}/search?q={search_term_string}`,
-      "query-input": "required name=search_term_string",
+    inLanguage: "en-US",
+    publisher: {
+      "@id": `${SITE_URL}/#organization`,
     },
   }
 }
@@ -60,8 +63,9 @@ export function buildWebSiteSchema() {
 export function buildLocalBusinessSchema() {
   return {
     "@context": "https://schema.org",
-    "@type": "LocalBusiness",
-    name: ORGANIZATION.name,
+    "@type": ["LocalBusiness", "HealthAndBeautyBusiness"],
+    "@id": `${SITE_URL}/#localbusiness`,
+    name: "Liquid Health",
     description: ORGANIZATION.description,
     url: SITE_URL,
     telephone: ORGANIZATION.phone,
@@ -79,8 +83,11 @@ export function buildLocalBusinessSchema() {
       closes: "18:00",
     },
     priceRange: "₹810 - ₹5900",
-    image: PRODUCT_IMAGE_URL,
+    image: [PRODUCT_IMAGE_URL, ORG_LOGO_URL],
     sameAs: ORGANIZATION.sameAs,
+    parentOrganization: {
+      "@id": `${SITE_URL}/#organization`,
+    },
   }
 }
 
@@ -116,7 +123,9 @@ export function buildProductSchema(product?: {
     "@type": "Product",
     name,
     description,
-    image,
+    image: [image],
+    url: `${SITE_URL}/#pricing`,
+    sku: "PFG-500ML",
     brand: { "@type": "Brand", name: ORGANIZATION.name },
     manufacturer: { "@type": "Organization", name: ORGANIZATION.legalName },
     category: "Joint Health Supplements",
@@ -126,7 +135,7 @@ export function buildProductSchema(product?: {
       highPrice: 5900,
       priceCurrency: "INR",
       availability: "https://schema.org/InStock",
-      url: SITE_URL,
+      url: `${SITE_URL}/#pricing`,
       offerCount: offers.length,
       offers,
     },
@@ -135,6 +144,7 @@ export function buildProductSchema(product?: {
       ratingValue: "4.8",
       bestRating: "5",
       reviewCount: "2400",
+      ratingCount: "2400",
     },
     review: [
       {
@@ -142,6 +152,7 @@ export function buildProductSchema(product?: {
         reviewRating: { "@type": "Rating", ratingValue: "5", bestRating: "5" },
         author: { "@type": "Person", name: "Verified Customer" },
         reviewBody: "Significant improvement in joint mobility and reduction in morning stiffness within 3 weeks of use.",
+        datePublished: "2026-08-01",
       },
     ],
     additionalProperty: [
@@ -151,10 +162,7 @@ export function buildProductSchema(product?: {
       { "@type": "PropertyValue", name: "Botanical Extracts", value: "12" },
       { "@type": "PropertyValue", name: "Certifications", value: "GMP, ISO 9001, FDA Registered, AYUSH Approved, FSSAI Licensed" },
     ],
-    speakable: {
-      "@type": "SpeakableSpecification",
-      cssSelector: [".product-name", ".product-description"],
-    },
+    speaksAbout: ORGANIZATION.description,
   }
 }
 
@@ -227,33 +235,37 @@ export function buildBreadcrumbSchema(items: { name: string; url: string }[]) {
   }
 }
 
+function toIsoDate(value: string): string {
+  const parsed = new Date(value)
+  return Number.isNaN(parsed.getTime()) ? value : parsed.toISOString()
+}
+
 export function buildArticleSchema(post: {
   title: string
   description: string
   datePublished: string
+  dateModified?: string
   slug: string
   category: string
+  image?: string
 }) {
+  const datePublished = toIsoDate(post.datePublished)
   return {
     "@context": "https://schema.org",
     "@type": "BlogPosting",
     headline: post.title,
     description: post.description,
-    datePublished: post.datePublished,
-    dateModified: post.datePublished,
+    datePublished,
+    dateModified: post.dateModified ? toIsoDate(post.dateModified) : datePublished,
+    image: post.image || [`${SITE_URL}/opengraph-image`],
     author: {
       "@type": "Organization",
       name: ORGANIZATION.name,
       url: SITE_URL,
+      "@id": `${SITE_URL}/#organization`,
     },
     publisher: {
-      "@type": "Organization",
-      name: ORGANIZATION.name,
-      url: SITE_URL,
-      logo: {
-        "@type": "ImageObject",
-        url: `${SITE_URL}/logo.png`,
-      },
+      "@id": `${SITE_URL}/#organization`,
     },
     mainEntityOfPage: {
       "@type": "WebPage",
@@ -261,9 +273,5 @@ export function buildArticleSchema(post: {
     },
     articleSection: post.category,
     inLanguage: "en-US",
-    speakable: {
-      "@type": "SpeakableSpecification",
-      cssSelector: ["h1", ".article-content"],
-    },
   }
 }

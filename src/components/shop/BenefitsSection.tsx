@@ -41,7 +41,7 @@ const rightBenefits = [
     title: "Systemic Detox",
     system: "Liver, Kidneys & Cellular Purity",
     desc: "Facilitates the removal of metabolic waste and toxins at the cellular level. Malkangni and Rosehip extracts support hepatic and renal function, protecting cells from oxidative damage.",
-    stat: "11",
+    stat: "12",
     statLabel: "extracts from high-altitude sources",
   },
   {
@@ -176,7 +176,7 @@ export function BenefitsSection() {
 
   return (
     <section
-      className="py-24 sm:py-32 px-margin-mobile md:px-gutter-md bg-surface"
+      className="py-24 sm:py-32 px-margin-mobile md:px-gutter-md bg-surface scroll-mt-20"
       id="benefits"
       aria-labelledby="benefits-heading"
     >
@@ -198,7 +198,7 @@ export function BenefitsSection() {
           </p>
           <h2
             id="benefits-heading"
-            className="text-display-sm md:text-display-lg font-extrabold leading-tight mb-6 text-on-surface"
+            className="text-4xl sm:text-display-sm md:text-display-lg font-extrabold leading-[1.05] mb-6 text-on-surface text-balance"
           >
             Targeted Biological Restoration
           </h2>

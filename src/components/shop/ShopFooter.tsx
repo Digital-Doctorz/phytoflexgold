@@ -2,9 +2,9 @@ import Link from "next/link"
 
 export function ShopFooter() {
   return (
-    <footer className="bg-surface-container-lowest border-t border-outline-variant/20 pt-20 pb-10" role="contentinfo">
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-gutter-md px-margin-mobile md:px-gutter-md max-w-container-max mx-auto mb-20">
-        <div className="col-span-1 md:col-span-1">
+    <footer className="bg-surface-container-lowest border-t border-outline-variant/20 pt-16 sm:pt-20 pb-10" role="contentinfo">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-gutter-md px-margin-mobile md:px-gutter-md max-w-container-max mx-auto mb-12 sm:mb-20">
+        <div className="sm:col-span-2 lg:col-span-1">
           <div className="text-headline-md font-bold text-on-surface mb-6">Liquid Health</div>
           <p className="text-body-md text-on-surface-variant mb-6">
             Makers of PhytoFlex Gold — clinical-strength wellness protocols for the modern biological athlete. Engineered with 12 high-altitude botanical extracts for maximum joint, nerve, and muscle vitality.
@@ -29,31 +29,31 @@ export function ShopFooter() {
         <div>
           <h4 className="text-label-md text-secondary mb-6 uppercase tracking-widest">Protocol</h4>
           <ul className="space-y-4">
-            <li><Link href="/#science" className="text-on-surface-variant hover:text-primary transition-colors">The Molecular Science</Link></li>
-            <li><Link href="/#benefits" className="text-on-surface-variant hover:text-primary transition-colors">PhytoFlex Gold Benefits</Link></li>
-            <li><Link href="/#ingredients" className="text-on-surface-variant hover:text-primary transition-colors">Curated Formulation</Link></li>
-            <li><Link href="/#timeline" className="text-on-surface-variant hover:text-primary transition-colors">Recovery Timeline</Link></li>
-            <li><Link href="/#pricing" className="text-on-surface-variant hover:text-primary transition-colors">Pricing Plans</Link></li>
-            <li><Link href="/#faq" className="text-on-surface-variant hover:text-primary transition-colors">Clinical Clarifications</Link></li>
+            <li><Link href="/#science" className="text-on-surface-variant hover:text-primary transition-colors inline-block py-0.5">The Molecular Science</Link></li>
+            <li><Link href="/#benefits" className="text-on-surface-variant hover:text-primary transition-colors inline-block py-0.5">PhytoFlex Gold Benefits</Link></li>
+            <li><Link href="/#ingredients" className="text-on-surface-variant hover:text-primary transition-colors inline-block py-0.5">Curated Formulation</Link></li>
+            <li><Link href="/#timeline" className="text-on-surface-variant hover:text-primary transition-colors inline-block py-0.5">Recovery Timeline</Link></li>
+            <li><Link href="/#pricing" className="text-on-surface-variant hover:text-primary transition-colors inline-block py-0.5">Pricing Plans</Link></li>
+            <li><Link href="/#faq" className="text-on-surface-variant hover:text-primary transition-colors inline-block py-0.5">Clinical Clarifications</Link></li>
           </ul>
         </div>
         <div>
           <h4 className="text-label-md text-secondary mb-6 uppercase tracking-widest">Legal</h4>
           <ul className="space-y-4">
-            <li><Link href="/privacy" className="text-on-surface-variant hover:text-primary transition-colors">Privacy Policy</Link></li>
-            <li><Link href="/terms" className="text-on-surface-variant hover:text-primary transition-colors">Terms of Service</Link></li>
-            <li><Link href="/returns" className="text-on-surface-variant hover:text-primary transition-colors">Return &amp; Refund Policy</Link></li>
-            <li><Link href="/shipping" className="text-on-surface-variant hover:text-primary transition-colors">Shipping Policy</Link></li>
-            <li><Link href="/disclaimer" className="text-on-surface-variant hover:text-primary transition-colors">Medical Disclaimer</Link></li>
+            <li><Link href="/privacy" className="text-on-surface-variant hover:text-primary transition-colors inline-block py-0.5">Privacy Policy</Link></li>
+            <li><Link href="/terms" className="text-on-surface-variant hover:text-primary transition-colors inline-block py-0.5">Terms of Service</Link></li>
+            <li><Link href="/returns" className="text-on-surface-variant hover:text-primary transition-colors inline-block py-0.5">Return &amp; Refund Policy</Link></li>
+            <li><Link href="/shipping" className="text-on-surface-variant hover:text-primary transition-colors inline-block py-0.5">Shipping Policy</Link></li>
+            <li><Link href="/disclaimer" className="text-on-surface-variant hover:text-primary transition-colors inline-block py-0.5">Medical Disclaimer</Link></li>
           </ul>
         </div>
         <div>
           <h4 className="text-label-md text-secondary mb-6 uppercase tracking-widest">Support</h4>
           <ul className="space-y-4">
-            <li><Link href="/contact" className="text-on-surface-variant hover:text-primary transition-colors">Contact Us</Link></li>
-            <li><Link href="/shipping" className="text-on-surface-variant hover:text-primary transition-colors">Shipping FAQ</Link></li>
-            <li><Link href="/blog" className="text-on-surface-variant hover:text-primary transition-colors">Blog</Link></li>
-            <li><Link href="/order-confirmation" className="text-on-surface-variant hover:text-primary transition-colors">Order Confirmation</Link></li>
+            <li><Link href="/contact" className="text-on-surface-variant hover:text-primary transition-colors inline-block py-0.5">Contact Us</Link></li>
+            <li><Link href="/shipping" className="text-on-surface-variant hover:text-primary transition-colors inline-block py-0.5">Shipping FAQ</Link></li>
+            <li><Link href="/blog" className="text-on-surface-variant hover:text-primary transition-colors inline-block py-0.5">Blog</Link></li>
+            <li><Link href="/#faq" className="text-on-surface-variant hover:text-primary transition-colors inline-block py-0.5">Product FAQ</Link></li>
           </ul>
         </div>
       </div>
