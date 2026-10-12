@@ -80,7 +80,7 @@ function renderOrderEmail(order: Order, opts: { subject: string; headline: strin
             <tr>
               <td style="background:#0a0a0a;padding:22px 32px;border-bottom:3px solid #ff6b35;">
                 <span style="color:#ffb59d;font-size:20px;font-weight:800;letter-spacing:0.4px;">PHYTOFLEX GOLD</span>
-                <span style="color:#e9c349;font-size:12px;font-weight:600;display:block;margin-top:2px;">CLINICAL JOINT &amp; NERVE CARE</span>
+                <span style="color:#e9c349;font-size:12px;font-weight:600;display:block;margin-top:2px;">AYURVEDIC JOINT &amp; MOBILITY CARE</span>
               </td>
             </tr>
             <tr>
