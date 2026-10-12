@@ -137,3 +137,49 @@ export function decideRedemption(input: {
 export function appliedMessage(code: string, percent: number): string {
   return COUPON_MESSAGES.applied.replace("{CODE}", code).replace("{PERCENT}", String(percent))
 }
+
+// AF-3: bounded retry with exponential backoff for Firestore contention.
+export function isContentionError(err: unknown): boolean {
+  const e = err as { code?: unknown; message?: unknown } | null
+  if (!e) return false
+  if (e.code === 10 || e.code === "aborted" || e.code === "ABORTED") return true // ABORTED
+  if (e.code === 4 || e.code === "deadline-exceeded") return true // DEADLINE_EXCEEDED
+  return typeof e.message === "string" && /contention|aborted/i.test(e.message)
+}
+
+export function backoffMs(attempt: number, baseMs = 100, maxMs = 1000): number {
+  return Math.min(maxMs, baseMs * 2 ** Math.max(0, attempt - 1))
+}
+
+export async function withBoundedRetry<T>(
+  fn: () => Promise<T>,
+  opts: { attempts?: number; baseMs?: number; sleep?: (ms: number) => Promise<void> } = {}
+): Promise<{ ok: true; value: T; attempts: number } | { ok: false; error: unknown; attempts: number }> {
+  const attempts = Math.max(1, opts.attempts ?? 3)
+  const sleep = opts.sleep ?? ((ms: number) => new Promise<void>((r) => setTimeout(r, ms)))
+  let lastErr: unknown
+  for (let i = 1; i <= attempts; i++) {
+    try {
+      return { ok: true, value: await fn(), attempts: i }
+    } catch (err) {
+      lastErr = err
+      if (!isContentionError(err) || i === attempts) return { ok: false, error: err, attempts: i }
+      await sleep(backoffMs(i, opts.baseMs))
+    }
+  }
+  return { ok: false, error: lastErr, attempts }
+}
+
+// AF-3 decision: after retries are exhausted, flag the order for admin. Never
+// touches status/total (order stays PAID, never re-priced). Returns null when
+// there is nothing to flag (no coupon, or it already reached a final state).
+export function redeemFailedUpdate(order: {
+  status?: unknown
+  discount?: { code?: unknown } | null
+  coupon?: { status?: unknown } | null
+}): { "coupon.status": "redeem_failed"; couponFlag: { reason: "redeem_failed"; at: Date } } | null {
+  if (order.status !== "PAID" || !order.discount?.code) return null
+  const st = order.coupon?.status
+  if (st === "redeemed" || st === "over_limit") return null
+  return { "coupon.status": "redeem_failed", couponFlag: { reason: "redeem_failed", at: new Date() } }
+}

@@ -255,6 +255,11 @@ export function OrderDetails({
               Possible double charge
             </Badge>
           )}
+          {order.coupon?.status === "redeem_failed" && (
+            <Badge variant="warning" title="Coupon redemption could not be recorded. Order stays PAID; not re-priced. Review.">
+              Coupon redeem failed
+            </Badge>
+          )}
           {order.coupon?.status === "over_limit" && (
             <Badge variant="warning" title="Coupon limit exceeded after capture. Order stays PAID; not re-priced. Review.">
               Coupon over limit

@@ -93,8 +93,8 @@ export interface Order {
   // PR-B coupon fields (all optional; old orders stay valid).
   subtotal?: number
   discount?: { code: string; percent: number; amount: number }
-  coupon?: { code: string; status: "applied" | "redeemed" | "over_limit" }
-  couponFlag?: { reason: "over_limit_after_capture"; at: Date }
+  coupon?: { code: string; status: "applied" | "redeemed" | "over_limit" | "redeem_failed" }
+  couponFlag?: { reason: "over_limit_after_capture" | "redeem_failed"; at: Date }
   shipping?: OrderShipping
   paidAt?: Date
   cancelledAt?: Date

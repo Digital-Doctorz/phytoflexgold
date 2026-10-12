@@ -11,6 +11,8 @@ import {
   normalizeEmail,
   redemptionDocIds,
   redemptionHash,
+  redeemFailedUpdate,
+  withBoundedRetry,
 } from "@/lib/coupon-rules"
 
 function pepper(): string {
@@ -73,7 +75,7 @@ export async function applyCoupon(
 // payment.captured webhook, whichever is first). Runs in a Firestore
 // transaction, is idempotent, and NEVER re-prices or un-pays (JC-3): if the
 // limit was exceeded in a race, the order stays PAID and is flagged.
-export async function recordCouponRedemption(db: Firestore, orderRef: DocumentReference): Promise<string> {
+async function recordCouponRedemptionOnce(db: Firestore, orderRef: DocumentReference): Promise<string> {
   return db.runTransaction(async (tx) => {
     const orderSnap = await tx.get(orderRef)
     const order = orderSnap.data()
@@ -126,4 +128,22 @@ export async function recordCouponRedemption(db: Firestore, orderRef: DocumentRe
     tx.update(orderRef, { "coupon.status": "redeemed", updatedAt: new Date() })
     return decision
   })
+}
+
+// AF-3: retry on contention (bounded, with backoff). If it still fails, flag
+// the order coupon.status='redeem_failed' + couponFlag for the admin badge.
+// Never throws; never changes status or total. A later verify/webhook replay
+// retries the redemption (redeem_failed is not a final state).
+export async function recordCouponRedemption(db: Firestore, orderRef: DocumentReference): Promise<string> {
+  const result = await withBoundedRetry(() => recordCouponRedemptionOnce(db, orderRef), { attempts: 3, baseMs: 150 })
+  if (result.ok) return result.value
+  console.error(`[coupon] redemption failed after ${result.attempts} attempt(s) for ${orderRef.id}`, result.error)
+  try {
+    const snap = await orderRef.get()
+    const update = redeemFailedUpdate(snap.data() ?? {})
+    if (update) await orderRef.update({ ...update, updatedAt: new Date() })
+  } catch (err) {
+    console.error("[coupon] could not flag redeem_failed", err)
+  }
+  return "redeem_failed"
 }
