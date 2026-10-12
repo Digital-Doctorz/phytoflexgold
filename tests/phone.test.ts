@@ -1,6 +1,6 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
-import { normalizeIndianPhone } from "../src/lib/phone.ts"
+import { normalizeIndianPhone } from "../src/lib/phone"
 
 const E = "+919812345678"
 test("JC-2 phone normalisation: accepted formats", () => {
