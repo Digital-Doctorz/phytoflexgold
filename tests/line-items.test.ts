@@ -1,6 +1,6 @@
 import { test } from "node:test"
 import assert from "node:assert/strict"
-import { lineAmountRupees, bottlesLabel, itemsSubtotalRupees, formatRupees } from "../src/lib/line-items.ts"
+import { lineAmountRupees, bottlesLabel, itemsSubtotalRupees, formatRupees } from "../src/lib/line-items"
 
 test("CP-7: pack price shown once, not price × bottles", () => {
   assert.equal(lineAmountRupees({ price: 810, quantity: 1 }), 810)

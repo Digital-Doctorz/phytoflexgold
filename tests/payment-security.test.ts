@@ -8,11 +8,12 @@ import {
   checkRazorpayOrderBinding,
   computeAmountMismatch,
   rupeesToPaise,
-} from "../src/lib/payment-security.ts"
+  decideWebhookAction,
+} from "../src/lib/payment-security"
 
 const KEY = "test_key_secret_placeholder"
 const WH = "test_webhook_secret_placeholder"
-const sig = (s, d) => createHmac("sha256", s).update(d).digest("hex")
+const sig = (s: string, d: string) => createHmac("sha256", s).update(d).digest("hex")
 
 test("payment signature: valid", () => {
   assert.equal(isPaymentSignatureValid(KEY, "order_A", "pay_1", sig(KEY, "order_A|pay_1")), true)
@@ -54,4 +55,17 @@ test("amountMismatch", () => {
   assert.equal(computeAmountMismatch(undefined, 2100).amountMismatch, true)
   assert.equal(computeAmountMismatch(210000, undefined).amountMismatch, true)
   assert.deepEqual(computeAmountMismatch(81000, 810), { amountMismatch: false, expectedPaise: 81000, capturedPaise: 81000 })
+})
+
+test("AF-1: late payment.failed never touches a PAID order", () => {
+  assert.equal(decideWebhookAction({ event: "payment.failed", currentStatus: "PAID", currentPaymentId: "pay_1", incomingPaymentId: "pay_2" }), "skip_failed_on_paid")
+  assert.equal(decideWebhookAction({ event: "payment.failed", currentStatus: "PAID", currentPaymentId: "pay_1", incomingPaymentId: "pay_1" }), "skip_failed_on_paid")
+  assert.equal(decideWebhookAction({ event: "payment.failed", currentStatus: "PENDING", currentPaymentId: undefined, incomingPaymentId: "pay_2" }), "apply_failed")
+})
+test("AF-2: duplicate payment.captured is a no-op; different id never overwrites", () => {
+  assert.equal(decideWebhookAction({ event: "payment.captured", currentStatus: "PAID", currentPaymentId: "pay_1", incomingPaymentId: "pay_1" }), "skip_duplicate_capture")
+  assert.equal(decideWebhookAction({ event: "payment.captured", currentStatus: "PAID", currentPaymentId: "pay_1", incomingPaymentId: "pay_9" }), "record_extra_capture")
+  assert.equal(decideWebhookAction({ event: "payment.captured", currentStatus: "PENDING", currentPaymentId: undefined, incomingPaymentId: "pay_1" }), "apply_captured")
+  // verify-payment marked PAID without a stored paymentId yet → webhook may fill it in
+  assert.equal(decideWebhookAction({ event: "payment.captured", currentStatus: "PAID", currentPaymentId: "", incomingPaymentId: "pay_1" }), "apply_captured")
 })
