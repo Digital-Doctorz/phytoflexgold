@@ -2,6 +2,7 @@ import "server-only"
 import nodemailer from "nodemailer"
 import { Resend } from "resend"
 import type { Order, OrderStatus } from "@/types"
+import { bottlesLabel, formatRupees, lineAmountRupees } from "@/lib/line-items"
 
 interface EmailResult {
   ok: boolean
@@ -51,11 +52,10 @@ export function orderLabel(orderId: string): string {
 function renderOrderEmail(order: Order, opts: { subject: string; headline: string; body: string; action?: { label: string } }): string {
   const summary = order.items
     ?.map((i) => {
-      const p = Number(i.price) || 0
-      const q = Number(i.quantity) || 1
+      // CP-7: price is the pack price (rupees); quantity is bottles in the pack.
       return `<tr>
-        <td style="padding:8px 0;border-bottom:1px solid #eee;color:#333;font-size:14px;">${i.productName} &times; ${q}</td>
-        <td style="padding:8px 0;border-bottom:1px solid #eee;color:#333;font-size:14px;text-align:right;">₹${(p * q).toLocaleString("en-IN")}</td>
+        <td style="padding:8px 0;border-bottom:1px solid #eee;color:#333;font-size:14px;">${i.productName} ${bottlesLabel(i)}</td>
+        <td style="padding:8px 0;border-bottom:1px solid #eee;color:#333;font-size:14px;text-align:right;">${formatRupees(lineAmountRupees(i))}</td>
       </tr>`
     })
     .join("") || ""

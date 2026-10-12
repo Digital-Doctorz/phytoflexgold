@@ -1,6 +1,6 @@
 import "server-only"
 import Razorpay from "razorpay"
-import { createHmac } from "crypto"
+import { isPaymentSignatureValid } from "@/lib/payment-security"
 
 const keyId = process.env.RAZORPAY_KEY_ID
 const keySecret = process.env.RAZORPAY_KEY_SECRET
@@ -41,8 +41,6 @@ export function verifyRazorpayPayment(
   paymentId: string,
   signature: string
 ) {
-  const expectedSignature = createHmac("sha256", requireKeySecret())
-    .update(`${orderId}|${paymentId}`)
-    .digest("hex")
-  return expectedSignature === signature
+  // Constant-time compare with a length check (CP-6 / JC-1).
+  return isPaymentSignatureValid(requireKeySecret(), orderId, paymentId, signature)
 }

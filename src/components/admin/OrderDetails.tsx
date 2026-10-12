@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { formatDate, formatPrice } from "@/lib/utils"
+import { bottlesLabel, lineAmountRupees } from "@/lib/line-items"
 import { authFetch } from "@/lib/auth-client"
 import { AlertCircle, CheckCircle2, ChevronDown, ChevronRight, Mail, Truck, X } from "lucide-react"
 import type { Order, OrderStatus } from "@/types"
@@ -249,6 +250,11 @@ export function OrderDetails({
             <p className="font-bold text-lg">{formatPrice(order.total)}</p>
             <p className="text-xs text-on-surface-variant">{formatDate(order.createdAt)}</p>
           </div>
+          {order.amountMismatch && (
+            <Badge variant="error" title="Captured amount differs from the order total. Review in Razorpay; the order was not re-priced.">
+              Amount mismatch
+            </Badge>
+          )}
           <Badge variant={statusColors[order.status]}>{order.status}</Badge>
         </div>
       </div>
@@ -273,9 +279,9 @@ export function OrderDetails({
                 {order.items?.map((item) => (
                   <p key={item.productId} className="flex justify-between gap-2">
                     <span>
-                      {item.productName} <span className="text-on-surface-variant">× {item.quantity}</span>
+                      {item.productName} <span className="text-on-surface-variant">{bottlesLabel(item)}</span>
                     </span>
-                    <span className="font-bold">{formatPrice((item.price || 0) * (item.quantity || 1))}</span>
+                    <span className="font-bold">{formatPrice(lineAmountRupees(item))}</span>
                   </p>
                 ))}
               </div>

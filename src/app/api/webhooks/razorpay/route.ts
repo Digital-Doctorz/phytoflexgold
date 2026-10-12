@@ -1,19 +1,12 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getAdminDb } from "@/lib/firebase-admin"
-import { createHmac, timingSafeEqual } from "crypto"
+import { computeAmountMismatch, isWebhookSignatureValid } from "@/lib/payment-security"
 
-// Verifies that the webhook request actually came from Razorpay.
+// Verifies that the webhook request actually came from Razorpay, using the
+// dedicated webhook secret configured in the Razorpay dashboard
+// (RAZORPAY_WEBHOOK_SECRET), not the API key secret. See DEPLOY.md.
 function isWebhookValid(rawBody: string, signature: string | null) {
-  if (!signature) return false
-  const secret = process.env.RAZORPAY_KEY_SECRET
-  if (!secret) return false
-  const expected = createHmac("sha256", secret).update(rawBody).digest("hex")
-  const expectedBuffer = Buffer.from(expected, "utf8")
-  const signatureBuffer = Buffer.from(signature, "utf8")
-  return (
-    expectedBuffer.length === signatureBuffer.length &&
-    timingSafeEqual(expectedBuffer, signatureBuffer)
-  )
+  return isWebhookSignatureValid(process.env.RAZORPAY_WEBHOOK_SECRET, rawBody, signature)
 }
 
 export async function POST(request: NextRequest) {
@@ -52,10 +45,22 @@ export async function POST(request: NextRequest) {
     }
 
     const orderRef = ordersSnap.docs[0].ref
+    const order = ordersSnap.docs[0].data()
 
     if (event === "payment.captured") {
+      // Compare the captured amount with the server-stored total. A mismatch is
+      // flagged for admin review only: the payment is never re-priced.
+      const amountCheck = computeAmountMismatch(payment?.amount, order.total)
+      if (amountCheck.amountMismatch) {
+        console.warn(
+          `[webhook] amount mismatch on ${razorpayOrderId}: captured ${amountCheck.capturedPaise} expected ${amountCheck.expectedPaise}`
+        )
+      }
       await orderRef.update({
         status: "PAID",
+        amountMismatch: amountCheck.amountMismatch,
+        "razorpay.amountCapturedPaise": amountCheck.capturedPaise,
+        "razorpay.amountExpectedPaise": amountCheck.expectedPaise,
         "razorpay.paymentId": razorpayPaymentId,
         "razorpay.method": payment?.method || null,
         "razorpay.fee": typeof payment?.fee === "number" ? payment.fee / 100 : null,

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getAdminDb } from "@/lib/firebase-admin"
 import { verifyRazorpayPayment } from "@/lib/razorpay"
+import { checkRazorpayOrderBinding } from "@/lib/payment-security"
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,8 +20,25 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    // Load the app order first and bind the payment to the Razorpay order id
+    // that create-order stored on it. Never trust the client-supplied id alone.
+    const db = getAdminDb()
+    const orderRef = db.collection("orders").doc(orderId)
+    const orderSnap = await orderRef.get()
+
+    if (!orderSnap.exists) {
+      return NextResponse.json({ error: "Order not found" }, { status: 404 })
+    }
+
+    const order = orderSnap.data()!
+    const binding = checkRazorpayOrderBinding(order.razorpay?.orderId, razorpayOrderId)
+    if (!binding.ok) {
+      console.warn(`[verify-payment] order ${orderId}: ${binding.reason}`)
+      return NextResponse.json({ error: "Payment does not match this order" }, { status: 400 })
+    }
+
     const signatureValid = verifyRazorpayPayment(
-      razorpayOrderId,
+      order.razorpay.orderId,
       razorpayPaymentId,
       razorpaySignature
     )
@@ -29,12 +47,9 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid payment signature" }, { status: 400 })
     }
 
-    const db = getAdminDb()
-    const orderRef = db.collection("orders").doc(orderId)
-    const orderSnap = await orderRef.get()
-
-    if (!orderSnap.exists) {
-      return NextResponse.json({ error: "Order not found" }, { status: 404 })
+    if (order.status === "PAID") {
+      // Idempotent replay (e.g. the webhook got there first).
+      return NextResponse.json({ success: true })
     }
 
     await orderRef.update({

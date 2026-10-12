@@ -9,7 +9,9 @@
     "dev": "npx next dev --webpack",
     "build": "npx next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "node --experimental-strip-types --test tests/*.test.mjs",
+    "typecheck": "tsc --noEmit -p ."
   },
   "overrides": {
     "jose": "5.9.6"
