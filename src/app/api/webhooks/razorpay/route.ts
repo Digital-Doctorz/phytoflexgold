@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getAdminDb } from "@/lib/firebase-admin"
 import { FieldValue } from "firebase-admin/firestore"
-import { computeAmountMismatch, decideWebhookAction, isWebhookSignatureValid } from "@/lib/payment-security"
+import { captureFields, decideWebhookAction, isWebhookSignatureValid } from "@/lib/payment-security"
 
 // Verifies that the webhook request actually came from Razorpay, using the
 // dedicated webhook secret configured in the Razorpay dashboard
@@ -58,28 +58,22 @@ export async function POST(request: NextRequest) {
         currentStatus: order.status,
         currentPaymentId: order.razorpay?.paymentId,
         incomingPaymentId: razorpayPaymentId,
+        currentCapturedPaise: order.razorpay?.amountCapturedPaise,
       })
 
-      if (decision === "apply_captured") {
-        // Compare the captured amount with the server-stored total. A mismatch
-        // is flagged for admin review only: the payment is never re-priced.
-        const amountCheck = computeAmountMismatch(payment?.amount, order.total)
-        if (amountCheck.amountMismatch) {
+      if (decision === "apply_captured" || decision === "backfill_capture") {
+        // JC-1 amount check: a mismatch is flagged for admin review only; the
+        // payment is never re-priced. A backfill (verify-payment marked PAID
+        // first) writes the capture details but never touches status (C3-1).
+        const fields = captureFields(payment, order, decision === "apply_captured" ? "apply" : "backfill")
+        if (fields.amountMismatch) {
           console.warn(
-            `[webhook] amount mismatch on ${razorpayOrderId}: captured ${amountCheck.capturedPaise} expected ${amountCheck.expectedPaise}`
+            `[webhook] amount mismatch on ${razorpayOrderId}: captured ${fields["razorpay.amountCapturedPaise"]} expected ${fields["razorpay.amountExpectedPaise"]}`
           )
         }
         tx.update(orderRef, {
-          status: "PAID",
-          amountMismatch: amountCheck.amountMismatch,
-          "razorpay.amountCapturedPaise": amountCheck.capturedPaise,
-          "razorpay.amountExpectedPaise": amountCheck.expectedPaise,
-          "razorpay.paymentId": razorpayPaymentId,
-          "razorpay.method": payment?.method || null,
-          "razorpay.fee": typeof payment?.fee === "number" ? payment.fee / 100 : null,
-          "razorpay.currency": payment?.currency || null,
-          paidAt: new Date(),
-          updatedAt: new Date(),
+          ...(decision === "apply_captured" ? { status: "PAID", "razorpay.paymentId": razorpayPaymentId } : {}),
+          ...fields,
         })
       } else if (decision === "record_extra_capture") {
         // A second captured payment on an already PAID order: keep the original
@@ -87,6 +81,7 @@ export async function POST(request: NextRequest) {
         console.warn(`[webhook] extra capture ${razorpayPaymentId} on PAID order ${orderRef.id}`)
         tx.update(orderRef, {
           "razorpay.extraPaymentIds": FieldValue.arrayUnion(razorpayPaymentId),
+          "razorpay.possibleDoubleCharge": true,
           updatedAt: new Date(),
         })
       } else if (decision === "apply_failed") {

@@ -250,6 +250,11 @@ export function OrderDetails({
             <p className="font-bold text-lg">{formatPrice(order.total)}</p>
             <p className="text-xs text-on-surface-variant">{formatDate(order.createdAt)}</p>
           </div>
+          {order.razorpay?.possibleDoubleCharge && (
+            <Badge variant="error" title="Another payment was captured for this order. Check Razorpay and refund if needed.">
+              Possible double charge
+            </Badge>
+          )}
           {order.amountMismatch && (
             <Badge variant="error" title="Captured amount differs from the order total. Review in Razorpay; the order was not re-priced.">
               Amount mismatch

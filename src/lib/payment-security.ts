@@ -80,14 +80,18 @@ export function computeAmountMismatch(
   }
 }
 
-// AF-1 / AF-2: decide what a webhook event may do to an order, given its
-// CURRENT state (read inside a Firestore transaction).
+// AF-1 / AF-2 / C3-1 / C3-2: decide what a webhook event may do to an order,
+// given its CURRENT state (read inside a Firestore transaction).
 //  - payment.failed never touches a PAID order (status and captured paymentId).
-//  - payment.captured is a no-op when the order is already PAID with the same
-//    paymentId. A capture with a DIFFERENT paymentId on a PAID order never
-//    overwrites the original; it is only recorded for admin review.
+//  - payment.captured on a PAID order with the same paymentId:
+//      * capture amount not stored yet (verify-payment ran first) → backfill
+//        amount/method/fee/currency/paidAt + amountMismatch, status untouched;
+//      * already stored → full duplicate, no-op.
+//  - payment.captured with a DIFFERENT paymentId on a PAID order never
+//    overwrites the original; it is recorded + flagged possibleDoubleCharge.
 export type WebhookAction =
   | "apply_captured"
+  | "backfill_capture"
   | "skip_duplicate_capture"
   | "record_extra_capture"
   | "apply_failed"
@@ -98,10 +102,59 @@ export function decideWebhookAction(input: {
   currentStatus: unknown
   currentPaymentId: unknown
   incomingPaymentId: unknown
+  currentCapturedPaise?: unknown
 }): WebhookAction {
   const paid = input.currentStatus === "PAID"
   if (input.event === "payment.failed") return paid ? "skip_failed_on_paid" : "apply_failed"
   if (!paid) return "apply_captured"
   if (typeof input.currentPaymentId !== "string" || input.currentPaymentId === "") return "apply_captured"
-  return input.currentPaymentId === input.incomingPaymentId ? "skip_duplicate_capture" : "record_extra_capture"
+  if (input.currentPaymentId !== input.incomingPaymentId) return "record_extra_capture"
+  return typeof input.currentCapturedPaise === "number" ? "skip_duplicate_capture" : "backfill_capture"
+}
+
+// Fields written from a captured payment entity (apply_captured and
+// backfill_capture). Never includes `status` for a backfill. paidAt is only
+// set when missing on a backfill.
+export function captureFields(
+  payment: { amount?: unknown; method?: unknown; fee?: unknown; currency?: unknown } | undefined,
+  order: { total?: unknown; paidAt?: unknown },
+  mode: "apply" | "backfill",
+  now: Date = new Date()
+): Record<string, unknown> {
+  const amountCheck = computeAmountMismatch(payment?.amount, order.total)
+  const fields: Record<string, unknown> = {
+    amountMismatch: amountCheck.amountMismatch,
+    "razorpay.amountCapturedPaise": amountCheck.capturedPaise,
+    "razorpay.amountExpectedPaise": amountCheck.expectedPaise,
+    "razorpay.method": typeof payment?.method === "string" ? payment.method : null,
+    "razorpay.fee": typeof payment?.fee === "number" ? payment.fee / 100 : null,
+    "razorpay.currency": typeof payment?.currency === "string" ? payment.currency : null,
+    updatedAt: now,
+  }
+  if (mode === "apply" || !order.paidAt) fields.paidAt = now
+  return fields
+}
+
+// C3-4: verify-payment decision, evaluated inside a Firestore transaction on
+// the freshly read order. Binding is checked before the signature.
+export type VerifyDecision =
+  | { kind: "not_found" }
+  | { kind: "mismatch"; reason: "no_razorpay_order" | "order_id_mismatch" }
+  | { kind: "bad_signature" }
+  | { kind: "already_paid" }
+  | { kind: "mark_paid" }
+
+export function decideVerifyAction(input: {
+  exists: boolean
+  status?: unknown
+  storedRazorpayOrderId: unknown
+  suppliedRazorpayOrderId: string
+  isSignatureValid: (storedRazorpayOrderId: string) => boolean
+}): VerifyDecision {
+  if (!input.exists) return { kind: "not_found" }
+  const binding = checkRazorpayOrderBinding(input.storedRazorpayOrderId, input.suppliedRazorpayOrderId)
+  if (!binding.ok) return { kind: "mismatch", reason: binding.reason }
+  if (!input.isSignatureValid(input.storedRazorpayOrderId as string)) return { kind: "bad_signature" }
+  if (input.status === "PAID") return { kind: "already_paid" }
+  return { kind: "mark_paid" }
 }
