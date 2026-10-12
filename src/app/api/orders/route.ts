@@ -4,6 +4,8 @@ import { requireAdmin } from "@/lib/auth"
 import { NextRequest } from "next/server"
 import type { OrderItem, PricingTier } from "@/types"
 import { applyCoupon } from "@/lib/coupons"
+import { rateLimit } from "@/lib/rate-limiter"
+import { COUPON_RATE_LIMIT, couponRateLimitKey } from "@/lib/client-ip"
 import { COUPON_MESSAGES } from "@/lib/coupon-rules"
 
 export async function GET(request: NextRequest) {
@@ -103,6 +105,11 @@ export async function POST(request: NextRequest) {
     let discountFields: Record<string, unknown> = {}
     const couponCode = typeof body?.couponCode === "string" ? body.couponCode.trim() : ""
     if (couponCode !== "") {
+      // AF-4: the coupon path is rate-limited here too (same bucket as /api/coupons/validate).
+      const rl = rateLimit(couponRateLimitKey(request.headers), COUPON_RATE_LIMIT.limit, COUPON_RATE_LIMIT.windowMs)
+      if (!rl.success) {
+        return NextResponse.json({ error: "Too many attempts. Please wait a minute." }, { status: 429 })
+      }
       if (orderItems.length !== 1) {
         return NextResponse.json(
           { error: COUPON_MESSAGES.not_eligible, reason: "not_eligible" },

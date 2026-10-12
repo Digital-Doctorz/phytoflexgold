@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getAdminDb } from "@/lib/firebase-admin"
 import { rateLimit } from "@/lib/rate-limiter"
+import { COUPON_RATE_LIMIT, couponRateLimitKey } from "@/lib/client-ip"
 import { applyCoupon } from "@/lib/coupons"
 import { COUPON_MESSAGES, appliedMessage } from "@/lib/coupon-rules"
 import type { PricingTier } from "@/types"
@@ -8,8 +9,8 @@ import type { PricingTier } from "@/types"
 // CP-4: preview only. Never writes; rate-limited (10/min/IP) against guessing.
 // The authoritative check is POST /api/orders.
 export async function POST(request: NextRequest) {
-  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown"
-  const rl = rateLimit(`coupon-validate:${ip}`, 10, 60_000)
+  // AF-4: platform IP (x-real-ip), shared bucket with POST /api/orders coupon path.
+  const rl = rateLimit(couponRateLimitKey(request.headers), COUPON_RATE_LIMIT.limit, COUPON_RATE_LIMIT.windowMs)
   if (!rl.success) {
     return NextResponse.json({ valid: false, message: "Too many attempts. Please wait a minute." }, { status: 429 })
   }
