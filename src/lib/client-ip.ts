@@ -1,13 +1,20 @@
-// AF-4: client IP for rate limiting, taken from the header the platform sets
-// (Vercel sets x-real-ip and overwrites any client-supplied value). The first
-// x-forwarded-for entry is client-controlled and is deliberately NOT used.
+// AF-4 / C3-3: client IP for rate limiting, from what the platform sets:
+//  1. x-real-ip (Vercel sets it and overwrites any client-supplied value);
+//  2. else the LAST x-forwarded-for hop (appended by the platform proxy; the
+//     earlier hops are client-controlled and are ignored);
+//  3. else "unknown".
 export interface HeaderGetter {
   get(name: string): string | null
 }
 
 export function platformClientIp(headers: HeaderGetter): string {
   const real = headers.get("x-real-ip")?.trim()
-  return real ? real : "unknown"
+  if (real) return real
+  const hops = (headers.get("x-forwarded-for") ?? "")
+    .split(",")
+    .map((h) => h.trim())
+    .filter(Boolean)
+  return hops.length > 0 ? hops[hops.length - 1] : "unknown"
 }
 
 // One shared bucket for every coupon path (/api/coupons/validate and the
