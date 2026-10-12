@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useSyncExternalStore } from "react"
 import { useRouter } from "next/navigation"
 import Script from "next/script"
 import { useCart } from "@/context/CartContext"
@@ -31,6 +31,8 @@ interface RazorpayFailureResponse {
   }
 }
 
+const noopSubscribe = () => () => {}
+
 export default function CheckoutPage() {
   const { items, total, clearCart } = useCart()
   const router = useRouter()
@@ -45,6 +47,52 @@ export default function CheckoutPage() {
     state: "",
     pincode: "",
   })
+
+  const couponsUi = process.env.NEXT_PUBLIC_COUPONS_ENABLED === "true"
+  // ?code=JODO10 prefill (DM links only; never shown in site copy). Read via
+  // useSyncExternalStore so SSR renders "" and the client picks up the param.
+  const codeParam = useSyncExternalStore(
+    noopSubscribe,
+    () => (couponsUi ? new URLSearchParams(window.location.search).get("code") ?? "" : ""),
+    () => ""
+  )
+  const [typedCode, setTypedCode] = useState<string | null>(null)
+  const codeInput = typedCode ?? codeParam.toUpperCase().slice(0, 20)
+  const setCodeInput = (v: string | ((prev: string) => string)) =>
+    setTypedCode(typeof v === "function" ? v(codeInput) : v)
+  const cartKey = items.map((i) => `${i.productId}:${i.tier.label}`).join("|")
+  const [couponState, setCoupon] = useState<{ code: string; percent: number; discount: number; payable: number; message: string; cartKey: string } | null>(null)
+  const [couponMsg, setCouponMsg] = useState<string | null>(null)
+  const [couponBusy, setCouponBusy] = useState(false)
+  // Any cart change invalidates a previewed discount (derived, no effect).
+  const coupon = couponState && couponState.cartKey === cartKey ? couponState : null
+  const payable = coupon ? coupon.payable : total
+
+  const applyCode = async () => {
+    const code = codeInput.trim().toUpperCase()
+    if (!code || items.length !== 1) return
+    setCouponBusy(true)
+    setCouponMsg(null)
+    try {
+      const res = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code, productId: items[0].productId, tier: items[0].tier }),
+      })
+      const data = await res.json()
+      if (data.valid) {
+        setCoupon({ code: data.code, percent: data.percent, discount: data.discount, payable: data.payable, message: data.message, cartKey })
+        setCouponMsg(data.message)
+      } else {
+        setCoupon(null)
+        setCouponMsg(data.message || "This code isn't valid.")
+      }
+    } catch {
+      setCouponMsg("Could not check this code right now.")
+    } finally {
+      setCouponBusy(false)
+    }
+  }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value })
@@ -62,13 +110,18 @@ export default function CheckoutPage() {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           items,
-          total,
           shippingAddress: form,
+          ...(coupon ? { couponCode: coupon.code } : {}),
           email: form.email,
         }),
       })
       const orderData = await orderRes.json()
       if (!orderRes.ok || !orderData.id) {
+        if (orderData.reason) {
+          // Coupon rejected server-side: drop it so the shopper can pay without it.
+          setCoupon(null)
+          setCouponMsg(orderData.error)
+        }
         throw new Error(orderData.error || "Failed to create your order")
       }
       const createdOrderId = orderData.id as string
@@ -213,10 +266,42 @@ export default function CheckoutPage() {
                     <span className="font-bold">{formatPrice(item.tier.price)}</span>
                   </div>
                 ))}
-                <div className="border-t border-outline-variant/20 pt-4">
+                {couponsUi && items.length === 1 && (
+                  <div className="space-y-2">
+                    <Label htmlFor="couponCode">Have a code?</Label>
+                    <div className="flex flex-col min-[360px]:flex-row gap-2">
+                      <Input
+                        id="couponCode"
+                        name="couponCode"
+                        value={codeInput}
+                        maxLength={20}
+                        autoComplete="off"
+                        onChange={(e) => { setCodeInput(e.target.value); setCoupon(null); setCouponMsg(null) }}
+                        onBlur={() => setCodeInput((v) => v.trim().toUpperCase())}
+                      />
+                      <Button type="button" variant="outline" data-track="coupon_apply" disabled={couponBusy || !codeInput.trim()} onClick={applyCode}>
+                        Apply
+                      </Button>
+                    </div>
+                    {couponMsg && <p className="text-body-sm text-on-surface-variant" aria-live="polite">{couponMsg}</p>}
+                  </div>
+                )}
+                <div className="border-t border-outline-variant/20 pt-4 space-y-1">
+                  {coupon && (
+                    <>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-on-surface-variant">Subtotal</span>
+                        <span>{formatPrice(total)}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-on-surface-variant">Code {coupon.code} ({coupon.percent}% off)</span>
+                        <span>−{formatPrice(coupon.discount)}</span>
+                      </div>
+                    </>
+                  )}
                   <div className="flex justify-between text-body-lg">
                     <span className="text-on-surface-variant">Total</span>
-                    <span className="font-bold text-on-surface">{formatPrice(total)}</span>
+                    <span className="font-bold text-on-surface">{formatPrice(payable)}</span>
                   </div>
                 </div>
                 {error && (
@@ -225,7 +310,7 @@ export default function CheckoutPage() {
                   </div>
                 )}
                 <Button type="submit" className="w-full" size="lg" disabled={loading}>
-                  {loading ? "Processing..." : `Pay ${formatPrice(total)}`}
+                  {loading ? "Processing..." : `Pay ${formatPrice(payable)}`}
                 </Button>
                 <p className="text-xs text-on-surface-variant text-center">
                   Secure payment via Razorpay. UPI, Cards, Netbanking accepted.

@@ -24,7 +24,11 @@ export const razorpay = new Razorpay({
 // Minimum order amount accepted by Razorpay is 100 paise (Rs. 1).
 export const MIN_AMOUNT_PAISE = 100
 
-export async function createRazorpayOrder(amountInRupees: number, receipt: string) {
+export async function createRazorpayOrder(
+  amountInRupees: number,
+  receipt: string,
+  notes?: Record<string, string>
+) {
   if (!Number.isFinite(amountInRupees) || amountInRupees * 100 < MIN_AMOUNT_PAISE) {
     throw new Error("Order amount must be at least 1 rupee")
   }
@@ -33,6 +37,7 @@ export async function createRazorpayOrder(amountInRupees: number, receipt: strin
     currency: "INR",
     receipt: receipt.slice(0, 40),
     payment_capture: true,
+    ...(notes ? { notes } : {}),
   })
 }
 

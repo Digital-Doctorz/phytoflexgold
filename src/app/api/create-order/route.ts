@@ -38,7 +38,10 @@ export async function POST(request: NextRequest) {
       })
     }
 
-    const razorpayOrder = await createRazorpayOrder(amount, orderId)
+    const razorpayOrder = await createRazorpayOrder(amount, orderId, {
+      appOrderId: orderId,
+      coupon: typeof order.discount?.code === "string" ? order.discount.code : "",
+    })
 
     await orderRef.update({
       "razorpay.orderId": razorpayOrder.id,

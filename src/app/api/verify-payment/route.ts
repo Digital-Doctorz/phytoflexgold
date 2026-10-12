@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getAdminDb } from "@/lib/firebase-admin"
+import { recordCouponRedemption } from "@/lib/coupons"
 import { verifyRazorpayPayment } from "@/lib/razorpay"
 import { decideVerifyAction } from "@/lib/payment-security"
 
@@ -59,6 +60,10 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid payment signature" }, { status: 400 })
     }
     // already_paid: idempotent replay (e.g. the webhook got there first).
+
+    // PR-B: count the coupon once, transactionally, after PAID (JC-3: never
+    // re-prices). Idempotent; a replay retries a redeem_failed redemption.
+    await recordCouponRedemption(db, orderRef)
 
     return NextResponse.json({ success: true })
   } catch (error) {

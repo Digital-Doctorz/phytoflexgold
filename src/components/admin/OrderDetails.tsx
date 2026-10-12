@@ -255,6 +255,11 @@ export function OrderDetails({
               Possible double charge
             </Badge>
           )}
+          {order.coupon?.status === "over_limit" && (
+            <Badge variant="warning" title="Coupon limit exceeded after capture. Order stays PAID; not re-priced. Review.">
+              Coupon over limit
+            </Badge>
+          )}
           {order.amountMismatch && (
             <Badge variant="error" title="Captured amount differs from the order total. Review in Razorpay; the order was not re-priced.">
               Amount mismatch
@@ -289,6 +294,22 @@ export function OrderDetails({
                     <span className="font-bold">{formatPrice(lineAmountRupees(item))}</span>
                   </p>
                 ))}
+                {order.discount && (
+                  <>
+                    <p className="flex justify-between gap-2 pt-1 border-t border-outline-variant/20">
+                      <span className="text-on-surface-variant">Subtotal</span>
+                      <span>{formatPrice(order.subtotal ?? 0)}</span>
+                    </p>
+                    <p className="flex justify-between gap-2">
+                      <span className="text-on-surface-variant">Discount ({order.discount.code}, {order.discount.percent}%)</span>
+                      <span>−{formatPrice(order.discount.amount)}</span>
+                    </p>
+                    <p className="flex justify-between gap-2 font-bold">
+                      <span>Total</span>
+                      <span>{formatPrice(order.total)}</span>
+                    </p>
+                  </>
+                )}
               </div>
             </section>
 
