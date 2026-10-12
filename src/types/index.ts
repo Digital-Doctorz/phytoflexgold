@@ -84,6 +84,7 @@ export interface Order {
     currency?: string
     amountCapturedPaise?: number | null
     amountExpectedPaise?: number | null
+    extraPaymentIds?: string[]
   }
   // Set by the payment.captured webhook when the captured amount differs from
   // round(total × 100). Admin review only; the order is never re-priced.

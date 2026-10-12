@@ -79,3 +79,29 @@ export function computeAmountMismatch(
     capturedPaise: captured,
   }
 }
+
+// AF-1 / AF-2: decide what a webhook event may do to an order, given its
+// CURRENT state (read inside a Firestore transaction).
+//  - payment.failed never touches a PAID order (status and captured paymentId).
+//  - payment.captured is a no-op when the order is already PAID with the same
+//    paymentId. A capture with a DIFFERENT paymentId on a PAID order never
+//    overwrites the original; it is only recorded for admin review.
+export type WebhookAction =
+  | "apply_captured"
+  | "skip_duplicate_capture"
+  | "record_extra_capture"
+  | "apply_failed"
+  | "skip_failed_on_paid"
+
+export function decideWebhookAction(input: {
+  event: "payment.captured" | "payment.failed"
+  currentStatus: unknown
+  currentPaymentId: unknown
+  incomingPaymentId: unknown
+}): WebhookAction {
+  const paid = input.currentStatus === "PAID"
+  if (input.event === "payment.failed") return paid ? "skip_failed_on_paid" : "apply_failed"
+  if (!paid) return "apply_captured"
+  if (typeof input.currentPaymentId !== "string" || input.currentPaymentId === "") return "apply_captured"
+  return input.currentPaymentId === input.incomingPaymentId ? "skip_duplicate_capture" : "record_extra_capture"
+}

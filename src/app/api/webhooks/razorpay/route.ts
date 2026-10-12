@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getAdminDb } from "@/lib/firebase-admin"
-import { computeAmountMismatch, isWebhookSignatureValid } from "@/lib/payment-security"
+import { FieldValue } from "firebase-admin/firestore"
+import { computeAmountMismatch, decideWebhookAction, isWebhookSignatureValid } from "@/lib/payment-security"
 
 // Verifies that the webhook request actually came from Razorpay, using the
 // dedicated webhook secret configured in the Razorpay dashboard
@@ -45,39 +46,62 @@ export async function POST(request: NextRequest) {
     }
 
     const orderRef = ordersSnap.docs[0].ref
-    const order = ordersSnap.docs[0].data()
 
-    if (event === "payment.captured") {
-      // Compare the captured amount with the server-stored total. A mismatch is
-      // flagged for admin review only: the payment is never re-priced.
-      const amountCheck = computeAmountMismatch(payment?.amount, order.total)
-      if (amountCheck.amountMismatch) {
-        console.warn(
-          `[webhook] amount mismatch on ${razorpayOrderId}: captured ${amountCheck.capturedPaise} expected ${amountCheck.expectedPaise}`
-        )
+    // AF-1/AF-2: read the current status inside a transaction and decide, so a
+    // late payment.failed can never revert a PAID order and a duplicate
+    // payment.captured is a no-op.
+    const action = await db.runTransaction(async (tx) => {
+      const snap = await tx.get(orderRef)
+      const order = snap.data() ?? {}
+      const decision = decideWebhookAction({
+        event,
+        currentStatus: order.status,
+        currentPaymentId: order.razorpay?.paymentId,
+        incomingPaymentId: razorpayPaymentId,
+      })
+
+      if (decision === "apply_captured") {
+        // Compare the captured amount with the server-stored total. A mismatch
+        // is flagged for admin review only: the payment is never re-priced.
+        const amountCheck = computeAmountMismatch(payment?.amount, order.total)
+        if (amountCheck.amountMismatch) {
+          console.warn(
+            `[webhook] amount mismatch on ${razorpayOrderId}: captured ${amountCheck.capturedPaise} expected ${amountCheck.expectedPaise}`
+          )
+        }
+        tx.update(orderRef, {
+          status: "PAID",
+          amountMismatch: amountCheck.amountMismatch,
+          "razorpay.amountCapturedPaise": amountCheck.capturedPaise,
+          "razorpay.amountExpectedPaise": amountCheck.expectedPaise,
+          "razorpay.paymentId": razorpayPaymentId,
+          "razorpay.method": payment?.method || null,
+          "razorpay.fee": typeof payment?.fee === "number" ? payment.fee / 100 : null,
+          "razorpay.currency": payment?.currency || null,
+          paidAt: new Date(),
+          updatedAt: new Date(),
+        })
+      } else if (decision === "record_extra_capture") {
+        // A second captured payment on an already PAID order: keep the original
+        // paymentId, record the extra one for admin review (possible refund).
+        console.warn(`[webhook] extra capture ${razorpayPaymentId} on PAID order ${orderRef.id}`)
+        tx.update(orderRef, {
+          "razorpay.extraPaymentIds": FieldValue.arrayUnion(razorpayPaymentId),
+          updatedAt: new Date(),
+        })
+      } else if (decision === "apply_failed") {
+        tx.update(orderRef, {
+          status: "PENDING",
+          "razorpay.paymentId": razorpayPaymentId,
+          "razorpay.error": payment?.error_description || "Payment failed",
+          updatedAt: new Date(),
+        })
       }
-      await orderRef.update({
-        status: "PAID",
-        amountMismatch: amountCheck.amountMismatch,
-        "razorpay.amountCapturedPaise": amountCheck.capturedPaise,
-        "razorpay.amountExpectedPaise": amountCheck.expectedPaise,
-        "razorpay.paymentId": razorpayPaymentId,
-        "razorpay.method": payment?.method || null,
-        "razorpay.fee": typeof payment?.fee === "number" ? payment.fee / 100 : null,
-        "razorpay.currency": payment?.currency || null,
-        paidAt: new Date(),
-        updatedAt: new Date(),
-      })
-    } else {
-      await orderRef.update({
-        status: "PENDING",
-        "razorpay.paymentId": razorpayPaymentId,
-        "razorpay.error": payment?.error_description || "Payment failed",
-        updatedAt: new Date(),
-      })
-    }
+      // skip_duplicate_capture / skip_failed_on_paid: no writes.
+      return decision
+    })
 
-    return NextResponse.json({ received: true })
+    return NextResponse.json({ received: true, action })
   } catch (error) {
     console.error("Razorpay webhook error:", error)
     return NextResponse.json({ error: "Webhook processing failed" }, { status: 500 })
