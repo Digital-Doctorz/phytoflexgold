@@ -82,7 +82,14 @@ export interface Order {
     method?: string
     fee?: number
     currency?: string
+    amountCapturedPaise?: number | null
+    amountExpectedPaise?: number | null
+    extraPaymentIds?: string[]
+    possibleDoubleCharge?: boolean
   }
+  // Set by the payment.captured webhook when the captured amount differs from
+  // round(total × 100). Admin review only; the order is never re-priced.
+  amountMismatch?: boolean
   shipping?: OrderShipping
   paidAt?: Date
   cancelledAt?: Date
