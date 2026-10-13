@@ -50,12 +50,12 @@ export function ShopHeader() {
                 </span>
               )}
             </button>
-            <button
-              onClick={() => setCartOpen(true)}
-              className="bg-primary-container text-on-primary-container px-6 py-2 rounded-full font-bold transition-all hover:opacity-90 active:scale-95 min-h-11"
+            <a
+              href="/pricing"
+              className="group inline-flex items-center justify-center whitespace-nowrap rounded-md text-base font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 disabled:pointer-events-none disabled:cursor-not-allowed bg-primary text-primary-foreground hover:bg-primary/90"
             >
               Buy Now
-            </button>
+            </a>
           </nav>
 
           <div className="flex items-center gap-1 lg:hidden">
@@ -95,12 +95,12 @@ export function ShopHeader() {
                   {link.label}
                 </a>
               ))}
-              <button
-                onClick={() => { setCartOpen(true); setMobileOpen(false) }}
-                className="bg-primary-container text-on-primary-container px-6 py-3.5 rounded-lg font-bold text-center mt-3 min-h-12 hover:opacity-90 active:scale-95 transition-all"
+              <a
+                href="/pricing"
+                className="group inline-flex items-center justify-center whitespace-nowrap rounded-md text-base font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 disabled:pointer-events-none disabled:cursor-not-allowed bg-primary text-primary-foreground hover:bg-primary/90 py-3.5 mt-3"
               >
                 Buy Now
-              </button>
+              </a>
             </div>
           </nav>
         )}

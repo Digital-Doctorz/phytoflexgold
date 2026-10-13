@@ -1,6 +1,6 @@
 import Link from "next/link"
 import type { Metadata } from "next"
-import { SITE_URL, buildBreadcrumbSchema } from "@/lib/seo"
+import { SITE_URL, buildBreadcrumbSchema, buildArticleSchema } from "@/lib/seo"
 import { posts as allPosts } from "./[slug]/data"
 
 export const metadata: Metadata = {
@@ -55,16 +55,16 @@ export default function BlogIndex() {
     url: `${SITE_URL}/blog`,
     inLanguage: "en-US",
     publisher: { "@id": `${SITE_URL}/#organization` },
-    blogPost: posts.map((post) => ({
-      "@type": "BlogPosting",
-      headline: post.title,
-      description: post.excerpt,
-      url: `${SITE_URL}/blog/${post.slug}`,
-      datePublished: new Date(post.date).toISOString(),
-      articleSection: post.category,
-      author: { "@id": `${SITE_URL}/#organization` },
-      publisher: { "@id": `${SITE_URL}/#organization` },
-    })),
+    blogPost: posts.map((post) => {
+      const postData = allPosts[post.slug]
+      return buildArticleSchema({
+        title: post.title,
+        description: post.excerpt,
+        datePublished: post.date,
+        slug: post.slug,
+        category: post.category,
+      })
+    }),
   }
 
   return (

@@ -248,6 +248,7 @@ export function buildArticleSchema(post: {
   slug: string
   category: string
   image?: string
+  authorName?: string
 }) {
   const datePublished = toIsoDate(post.datePublished)
   return {
@@ -257,8 +258,11 @@ export function buildArticleSchema(post: {
     description: post.description,
     datePublished,
     dateModified: post.dateModified ? toIsoDate(post.dateModified) : datePublished,
-    image: post.image || [`${SITE_URL}/opengraph-image`],
-    author: {
+    image: post.image ? [{ "@id": post.image }] : [`${SITE_URL}/opengraph-image`],
+    author: authorName ? {
+      "@type": "Person",
+      name: authorName,
+    } : {
       "@type": "Organization",
       name: ORGANIZATION.name,
       url: SITE_URL,
@@ -266,6 +270,8 @@ export function buildArticleSchema(post: {
     },
     publisher: {
       "@id": `${SITE_URL}/#organization`,
+      "@type": "Organization",
+      name: ORGANIZATION.name,
     },
     mainEntityOfPage: {
       "@type": "WebPage",
@@ -273,5 +279,19 @@ export function buildArticleSchema(post: {
     },
     articleSection: post.category,
     inLanguage: "en-US",
+    keywords: [post.category, "joint health", "botanical supplement"],
+  }
+}
+
+export function buildSpeakableSchema() {
+  return {
+    "@context": "https://schema.org",
+    "@type": "Speakable",
+    xpath: [
+      "//header/h1",
+      "//section[contains(@aria-label, 'Hero')]/p",
+      "//section[contains(@aria-label, 'ScienceSection')]//p[1]",
+      "//section[contains(@aria-label, 'BenefitsSection')]//p[1]",
+    ]
   }
 }

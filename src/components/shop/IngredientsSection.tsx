@@ -55,7 +55,7 @@ export function IngredientsSection() {
           {ingredients.map((ing, i) => (
             <article
               key={ing.name}
-              className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center ${i % 2 === 1 ? "lg:direction-rtl" : ""}`}
+              className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center ${i % 2 === 1 ? "lg:grid-flow-col-dense" : ""}`}
             >
               <div className={`overflow-hidden rounded-2xl shadow-2xl ${i % 2 === 1 ? "lg:order-2" : ""}`}>
                 <Image

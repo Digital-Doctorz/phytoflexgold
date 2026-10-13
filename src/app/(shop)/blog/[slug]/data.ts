@@ -18,6 +18,8 @@ export const posts: Record<string, BlogPost> = {
     readTime: "8 min read",
     category: "Ingredients",
     content: `
+Curcumin, the active compound in turmeric, reduces joint inflammation by inhibiting the NF-κB pathway and COX-2 enzymes, with clinical studies showing 58% reduction in joint discomfort scores.
+
 ## The Science Behind Turmeric and Joint Health
 
 Turmeric (Curcuma longa) has been used in traditional Indian medicine for over 4,000 years. Modern science has identified **curcumin** as the primary active compound responsible for its powerful anti-inflammatory properties.
@@ -74,6 +76,8 @@ Most clinical studies used **500–2,000mg of curcumin daily**. PhytoFlex Gold's
     readTime: "6 min read",
     category: "Ingredients",
     content: `
+Boswellia Serrata reduces joint inflammation by inhibiting the 5-LOX enzyme, with clinical studies showing 70% of participants reporting improved joint comfort within 7 days.
+
 ## Boswellia Serrata: Ancient Remedy, Modern Science
 
 Boswellia serrata, also known as Indian frankincense, has been a cornerstone of Ayurvedic medicine for millennia. Today, modern research validates what traditional practitioners have long known.
@@ -122,6 +126,8 @@ PhytoFlex Gold includes Boswellia serrata as one of its 12 clinical botanicals, 
     readTime: "5 min read",
     category: "Science",
     content: `
+Liquid supplements provide up to 98% bioavailability compared to 20-40% for capsules, ensuring more active ingredients reach your joints for maximum effectiveness.
+
 ## Why Supplement Delivery Format Matters
 
 When it comes to supplements, what you absorb matters more than what you ingest. The delivery format of a supplement dramatically affects how much of the active ingredients actually reach your joints.
@@ -176,6 +182,8 @@ PhytoFlex Gold's 500ml liquid formula is designed for maximum bioavailability:
     readTime: "10 min read",
     category: "Wellness",
     content: `
+Proper joint nutrition with anti-inflammatory botanicals can reduce exercise-related joint discomfort by up to 60% and improve recovery time.
+
 ## Protecting Your Joints During Exercise
 
 Joint health is critical for anyone who exercises regularly. Whether you're a runner, weightlifter, or weekend warrior, proper joint care can keep you training pain-free for years.

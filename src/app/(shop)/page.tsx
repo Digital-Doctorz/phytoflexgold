@@ -8,7 +8,17 @@ import { IngredientsSection } from "@/components/shop/IngredientsSection"
 import { ComparisonTable } from "@/components/shop/ComparisonTable"
 import { FAQSection } from "@/components/shop/FAQSection"
 import { getAdminDb } from "@/lib/firebase-admin"
-import { SITE_URL, PRODUCT_IMAGE_URL, buildProductSchema, buildFAQSchema, buildHowToSchema, buildBreadcrumbSchema } from "@/lib/seo"
+import {
+  SITE_URL,
+  PRODUCT_IMAGE_URL,
+  buildProductSchema,
+  buildFAQSchema,
+  buildHowToSchema,
+  buildBreadcrumbSchema,
+  buildOrganizationSchema,
+  buildLocalBusinessSchema,
+  buildSpeakableSchema,
+} from "@/lib/seo"
 import { homeFaqs } from "@/lib/faqs"
 import type { Metadata } from "next"
 import type { Product } from "@/types"
@@ -94,20 +104,16 @@ export default async function HomePage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildProductSchema(product)) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildFAQSchema(homepageFaqSchema)) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildHowToSchema()) }}
-      />
-      <script
-        type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(buildBreadcrumbSchema([{ name: "Home", url: SITE_URL }])),
+          __html: JSON.stringify([
+            buildOrganizationSchema(),
+            buildLocalBusinessSchema(),
+            buildProductSchema(product),
+            buildFAQSchema(homepageFaqSchema),
+            buildHowToSchema(),
+            buildBreadcrumbSchema([{ name: "Home", url: SITE_URL }]),
+            buildSpeakableSchema(),
+          ]),
         }}
       />
       <HeroSection />

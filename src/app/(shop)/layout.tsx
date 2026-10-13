@@ -18,8 +18,14 @@ export default function ShopLayout({ children }: { children: React.ReactNode }) 
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(buildLocalBusinessSchema()) }}
       />
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 z-50 p-4 bg-primary text-primary-foreground font-bold"
+      >
+        Skip to content
+      </a>
       <ShopHeader />
-      <main>{children}</main>
+      <main id="main-content">{children}</main>
       <ShopFooter />
     </CartProvider>
   )

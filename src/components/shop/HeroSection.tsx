@@ -29,7 +29,8 @@ export function HeroSection() {
             </a>
             <a
               href="#science"
-              className="w-full sm:w-auto border border-secondary text-secondary px-8 py-4 rounded-lg font-bold text-lg hover:bg-secondary/10 transition-all flex items-center justify-center gap-2 active:scale-95 min-h-12"
+              className="w-full sm:w-auto border border-secondary text-secondary px-8 py-4 rounded-lg font-bold text-lg hover:bg-secondary/10 transition-all flex items-center justify-center gap-2 active:scale-95 min-h-12 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-secondary focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+              aria-label="Watch video detailing the clinical science behind PhytoFlex Gold"
             >
               Watch Science <PlayCircle className="w-5 h-5" aria-hidden="true" />
             </a>
