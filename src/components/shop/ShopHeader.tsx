@@ -51,7 +51,7 @@ export function ShopHeader() {
               )}
             </button>
             <a
-              href="/pricing"
+              href="/#pricing"
               className="group inline-flex items-center justify-center whitespace-nowrap rounded-md text-base font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 disabled:pointer-events-none disabled:cursor-not-allowed bg-primary text-primary-foreground hover:bg-primary/90"
             >
               Buy Now
@@ -96,7 +96,7 @@ export function ShopHeader() {
                 </a>
               ))}
               <a
-                href="/pricing"
+                href="/#pricing"
                 className="group inline-flex items-center justify-center whitespace-nowrap rounded-md text-base font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-primary/50 disabled:pointer-events-none disabled:cursor-not-allowed bg-primary text-primary-foreground hover:bg-primary/90 py-3.5 mt-3"
               >
                 Buy Now
