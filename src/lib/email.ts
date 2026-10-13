@@ -94,6 +94,14 @@ function renderOrderEmail(order: Order, opts: { subject: string; headline: strin
                 </table>
 
                 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f9f9f9;border:1px solid #eee;border-radius:8px;padding:14px 16px;">
+                  ${order.discount ? `<tr>
+                    <td style="padding:4px 0;color:#666;font-size:13px;">Subtotal</td>
+                    <td style="padding:4px 0;color:#0a0a0a;font-size:14px;text-align:right;">${formatRupees(Number(order.subtotal) || 0)}</td>
+                  </tr>
+                  <tr>
+                    <td style="padding:4px 0;color:#666;font-size:13px;">Discount (${order.discount.code})</td>
+                    <td style="padding:4px 0;color:#0a0a0a;font-size:14px;text-align:right;">−${formatRupees(Number(order.discount.amount) || 0)}</td>
+                  </tr>` : ""}
                   <tr>
                     <td style="padding:4px 0;color:#666;font-size:13px;">Order total</td>
                     <td style="padding:4px 0;color:#0a0a0a;font-weight:800;font-size:15px;text-align:right;">₹${(Number(order.total) || 0).toLocaleString("en-IN")}</td>

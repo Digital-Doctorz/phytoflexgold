@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getAdminDb } from "@/lib/firebase-admin"
+import { recordCouponRedemption } from "@/lib/coupons"
 import { FieldValue } from "firebase-admin/firestore"
 import { captureFields, decideWebhookAction, isWebhookSignatureValid } from "@/lib/payment-security"
 
@@ -95,6 +96,12 @@ export async function POST(request: NextRequest) {
       // skip_duplicate_capture / skip_failed_on_paid: no writes.
       return decision
     })
+
+    // PR-B: count the coupon once, transactionally, after PAID (JC-3: never
+    // re-prices). Skipped on duplicate/extra captures (AF-2: no side effects).
+    if (action === "apply_captured" || action === "backfill_capture") {
+      await recordCouponRedemption(db, orderRef)
+    }
 
     return NextResponse.json({ received: true, action })
   } catch (error) {

@@ -3,6 +3,10 @@ import { getAdminDb, serializeFirestoreData } from "@/lib/firebase-admin"
 import { requireAdmin } from "@/lib/auth"
 import { NextRequest } from "next/server"
 import type { OrderItem, PricingTier } from "@/types"
+import { applyCoupon } from "@/lib/coupons"
+import { rateLimit } from "@/lib/rate-limiter"
+import { COUPON_RATE_LIMIT, couponRateLimitKey } from "@/lib/client-ip"
+import { COUPON_MESSAGES } from "@/lib/coupon-rules"
 
 export async function GET(request: NextRequest) {
   const authResult = await requireAdmin(request)
@@ -60,6 +64,7 @@ export async function POST(request: NextRequest) {
 
     const orderItems: OrderItem[] = []
     let total = 0
+    let couponTierId: string | null = null
 
     for (const item of items) {
       const productId = item?.productId
@@ -91,11 +96,51 @@ export async function POST(request: NextRequest) {
         price: catalogTier.price,
       })
       total += catalogTier.price
+      couponTierId = typeof catalogTier.id === "string" ? catalogTier.id : null
+    }
+
+    // Optional coupon (CP-3). Recomputed server-side from the catalog price;
+    // any client-sent total/discount is ignored. One code per single-pack order.
+    const subtotal = total
+    let discountFields: Record<string, unknown> = {}
+    const couponCode = typeof body?.couponCode === "string" ? body.couponCode.trim() : ""
+    if (couponCode !== "") {
+      // AF-4: the coupon path is rate-limited here too (same bucket as /api/coupons/validate).
+      const rl = rateLimit(couponRateLimitKey(request.headers), COUPON_RATE_LIMIT.limit, COUPON_RATE_LIMIT.windowMs)
+      if (!rl.success) {
+        return NextResponse.json({ error: "Too many attempts. Please wait a minute." }, { status: 429 })
+      }
+      if (orderItems.length !== 1) {
+        return NextResponse.json(
+          { error: COUPON_MESSAGES.not_eligible, reason: "not_eligible" },
+          { status: 400 }
+        )
+      }
+      const result = await applyCoupon(db, {
+        code: couponCode,
+        tierId: couponTierId,
+        tierPrice: subtotal,
+        phone: body?.shippingAddress?.phone ?? "",
+        email: body?.email,
+      })
+      if (!result.ok) {
+        return NextResponse.json(
+          { error: COUPON_MESSAGES[result.reason], reason: result.reason },
+          { status: 400 }
+        )
+      }
+      total = result.payable
+      discountFields = {
+        subtotal,
+        discount: { code: result.code, percent: result.percent, amount: result.discount },
+        coupon: { code: result.code, status: "applied" },
+      }
     }
 
     const docRef = await db.collection("orders").add({
       items: orderItems,
       total,
+      ...discountFields,
       email: typeof body?.email === "string" ? body.email : null,
       shippingAddress: body?.shippingAddress ?? null,
       status: "PENDING",
@@ -103,7 +148,7 @@ export async function POST(request: NextRequest) {
       updatedAt: new Date(),
     })
     return NextResponse.json(
-      { id: docRef.id, items: orderItems, total, email: body?.email ?? null, shippingAddress: body?.shippingAddress ?? null, status: "PENDING" },
+      { id: docRef.id, items: orderItems, total, ...discountFields, email: body?.email ?? null, shippingAddress: body?.shippingAddress ?? null, status: "PENDING" },
       { status: 201 }
     )
   } catch (error) {

@@ -90,6 +90,11 @@ export interface Order {
   // Set by the payment.captured webhook when the captured amount differs from
   // round(total × 100). Admin review only; the order is never re-priced.
   amountMismatch?: boolean
+  // PR-B coupon fields (all optional; old orders stay valid).
+  subtotal?: number
+  discount?: { code: string; percent: number; amount: number }
+  coupon?: { code: string; status: "applied" | "redeemed" | "over_limit" | "redeem_failed" }
+  couponFlag?: { reason: "over_limit_after_capture" | "redeem_failed"; at: Date }
   shipping?: OrderShipping
   paidAt?: Date
   cancelledAt?: Date
@@ -126,4 +131,30 @@ export interface StoreSettings {
   taxRate: string
   updatedAt?: Date
   version?: number
+}
+
+export interface Coupon {
+  code: string
+  percent: number
+  active: boolean
+  startsAt?: string | Date | null
+  expiresAt?: string | Date | null
+  perCustomerLimit?: number
+  maxUses?: number | null
+  usedCount?: number
+  eligibleTierIds?: string[]
+  eligiblePrices?: number[]
+  maxDiscountRupees?: number | null
+  stacksWithOtherCodes?: boolean
+  channel?: string
+  updatedAt?: Date
+}
+
+export interface CouponRedemption {
+  code: string
+  orderId: string
+  phoneHash: string | null
+  emailHash: string | null
+  amount: number | null
+  at: Date
 }

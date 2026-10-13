@@ -102,3 +102,11 @@ Rollback:
 - Webhook 401s after the change: re-check the dashboard secret equals the env value (whitespace!) and that a redeploy happened after the env change.
 - Full rollback: revert PR-A in Git and redeploy. The pre-PR-A code verifies the webhook with `RAZORPAY_KEY_SECRET`, so ALSO set the dashboard webhook secret back to the previous value (or to the key secret if that is what it was). Leaving `RAZORPAY_WEBHOOK_SECRET` set is harmless.
 - `amountMismatch` / `razorpay.amountCapturedPaise` fields stay on orders after rollback and are ignored by old code.
+
+## Coupon seed script (PR-B)
+
+`scripts/create-coupon-jodo10.mjs` creates `coupons/JODO10` **inactive**.
+- Requires **Node >=22.12** run with `--experimental-strip-types` (it imports `src/lib/coupon-config.ts`); on older Node it exits with a clear error.
+- **Dry run by default**: without `--write` it only prints the record. It writes only with the explicit `--write` flag, and uses `create()` so it never overwrites an existing coupon.
+- Run only after merge and DD's go: `FIREBASE_SERVICE_ACCOUNT_KEY='<json>' node --experimental-strip-types scripts/create-coupon-jodo10.mjs --write`
+- Activate separately when DD says start: `PATCH /api/admin/coupons {"code":"JODO10","active":true}`.
