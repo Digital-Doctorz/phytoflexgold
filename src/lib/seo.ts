@@ -259,9 +259,9 @@ export function buildArticleSchema(post: {
     datePublished,
     dateModified: post.dateModified ? toIsoDate(post.dateModified) : datePublished,
     image: post.image ? [{ "@id": post.image }] : [`${SITE_URL}/opengraph-image`],
-    author: authorName ? {
+    author: post.authorName ? {
       "@type": "Person",
-      name: authorName,
+      name: post.authorName,
     } : {
       "@type": "Organization",
       name: ORGANIZATION.name,
