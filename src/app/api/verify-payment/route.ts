@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server"
 import { getAdminDb } from "@/lib/firebase-admin"
 import { verifyRazorpayPayment } from "@/lib/razorpay"
+import { decideVerifyAction } from "@/lib/payment-security"
 
 export async function POST(request: NextRequest) {
   try {
@@ -19,30 +20,45 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    const signatureValid = verifyRazorpayPayment(
-      razorpayOrderId,
-      razorpayPaymentId,
-      razorpaySignature
-    )
-
-    if (!signatureValid) {
-      return NextResponse.json({ error: "Invalid payment signature" }, { status: 400 })
-    }
-
+    // C3-4: read-check-write in one transaction. Bind the payment to the
+    // Razorpay order id that create-order stored on THIS order (never trust the
+    // client-supplied id alone), then check the signature, then mark PAID once.
     const db = getAdminDb()
     const orderRef = db.collection("orders").doc(orderId)
-    const orderSnap = await orderRef.get()
+    const decision = await db.runTransaction(async (tx) => {
+      const snap = await tx.get(orderRef)
+      const order = snap.data()
+      const d = decideVerifyAction({
+        exists: snap.exists,
+        status: order?.status,
+        storedRazorpayOrderId: order?.razorpay?.orderId,
+        suppliedRazorpayOrderId: razorpayOrderId,
+        isSignatureValid: (stored) => verifyRazorpayPayment(stored, razorpayPaymentId, razorpaySignature),
+      })
+      if (d.kind === "mark_paid") {
+        const now = new Date()
+        tx.update(orderRef, {
+          status: "PAID",
+          "razorpay.paymentId": razorpayPaymentId,
+          "razorpay.signature": razorpaySignature,
+          paidAt: now,
+          updatedAt: now,
+        })
+      }
+      return d
+    })
 
-    if (!orderSnap.exists) {
+    if (decision.kind === "not_found") {
       return NextResponse.json({ error: "Order not found" }, { status: 404 })
     }
-
-    await orderRef.update({
-      status: "PAID",
-      "razorpay.paymentId": razorpayPaymentId,
-      "razorpay.signature": razorpaySignature,
-      updatedAt: new Date(),
-    })
+    if (decision.kind === "mismatch") {
+      console.warn(`[verify-payment] order ${orderId}: ${decision.reason}`)
+      return NextResponse.json({ error: "Payment does not match this order" }, { status: 400 })
+    }
+    if (decision.kind === "bad_signature") {
+      return NextResponse.json({ error: "Invalid payment signature" }, { status: 400 })
+    }
+    // already_paid: idempotent replay (e.g. the webhook got there first).
 
     return NextResponse.json({ success: true })
   } catch (error) {

@@ -46,7 +46,7 @@ export async function POST(
     const html = `<div style="font-family:ui-sans-serif,system-ui,Arial,sans-serif;max-width:560px;margin:0 auto;">
       <div style="background:#0a0a0a;border-bottom:3px solid #ff6b35;padding:22px 32px;">
         <span style="color:#ffb59d;font-size:20px;font-weight:800;">PHYTOFLEX GOLD</span>
-        <span style="color:#e9c349;font-size:12px;font-weight:600;display:block;margin-top:2px;">CLINICAL JOINT &amp; NERVE CARE</span>
+        <span style="color:#e9c349;font-size:12px;font-weight:600;display:block;margin-top:2px;">AYURVEDIC JOINT &amp; MOBILITY CARE</span>
       </div>
       <div style="padding:28px 32px;border:1px solid #e6e6e6;border-top:0;border-radius:0 0 12px 12px;">
         <p style="margin:0 0 4px;color:#ff6b35;font-weight:600;font-size:13px;">Order ${orderLabel(order.id)}</p>

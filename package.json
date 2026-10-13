@@ -9,7 +9,9 @@
     "dev": "npx next dev --webpack",
     "build": "npx next build --webpack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "test": "rm -rf .test-dist && tsc -p tsconfig.test.json && node --test .test-dist/tests/*.test.js",
+    "typecheck": "tsc --noEmit -p ."
   },
   "overrides": {
     "jose": "5.9.6"
