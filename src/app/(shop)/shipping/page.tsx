@@ -180,16 +180,6 @@ export default function ShippingPage() {
                   <td className="py-3 px-4 text-body-md text-on-surface">Free</td>
                   <td className="py-3 px-4 text-body-md text-on-surface">5–7 business days</td>
                 </tr>
-                <tr className="border-b border-outline-variant/10">
-                  <td className="py-3 px-4 text-body-md text-on-surface">Express Shipping</td>
-                  <td className="py-3 px-4 text-body-md text-on-surface">Rs. 199</td>
-                  <td className="py-3 px-4 text-body-md text-on-surface">2–3 business days</td>
-                </tr>
-                <tr>
-                  <td className="py-3 px-4 text-body-md text-on-surface">Metro Same-Day</td>
-                  <td className="py-3 px-4 text-body-md text-on-surface">Rs. 349</td>
-                  <td className="py-3 px-4 text-body-md text-on-surface">Same day (metro cities only)</td>
-                </tr>
               </tbody>
             </table>
           </div>
