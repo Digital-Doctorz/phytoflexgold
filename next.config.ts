@@ -28,6 +28,7 @@ const nextConfig: NextConfig = {
       // P2 REV1 (WEBARCHITECT-PFG-P2-LEGACY-REDIRECT-MAP-REV1-2026-10-06): legacy Shopify URLs, 28 rules, 301.
       // Order matters: specific sources before wildcards. statusCode 301 (permanent: true would emit 308).
       { source: "/home", destination: "/", statusCode: 301 },
+      { source: "/pricing", destination: "/#pricing", statusCode: 301 },
       { source: "/products", destination: "/#pricing", statusCode: 301 },
       { source: "/products/phytoflex-gold", destination: "/#pricing", statusCode: 301 },
       { source: "/products/phytoflex-gold-joint-pain-relief", destination: "/#pricing", statusCode: 301 },
