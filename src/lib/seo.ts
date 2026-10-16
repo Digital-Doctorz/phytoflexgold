@@ -43,13 +43,35 @@ export const ORGANIZATION = {
 } as const
 
 export function buildOrganizationSchema() {
+  const { phone, ...org } = ORGANIZATION
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "@id": `${SITE_URL}/#organization`,
-    ...ORGANIZATION,
+    "@id": ORG_ID,
+    ...org,
+    telephone: phone,
     logo: ORG_LOGO_URL,
     image: [PRODUCT_IMAGE_URL, ORG_LOGO_URL],
+  }
+}
+
+/**
+ * Site-wide entities, emitted ONCE per page by the (shop) layout as a single @graph.
+ * Pages must not re-emit Organization / WebSite / LocalBusiness; reference them by @id.
+ */
+export function buildSiteGraphSchema() {
+  const strip = <T extends { "@context"?: string }>(node: T) => {
+    const { "@context": _ctx, ...rest } = node
+    void _ctx
+    return rest
+  }
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      strip(buildOrganizationSchema()),
+      strip(buildWebSiteSchema()),
+      strip(buildLocalBusinessSchema()),
+    ],
   }
 }
 
@@ -62,9 +84,7 @@ export function buildWebSiteSchema() {
     description: ORGANIZATION.description,
     url: SITE_URL,
     inLanguage: "en-US",
-    publisher: {
-      "@id": `${SITE_URL}/#organization`,
-    },
+    publisher: { "@id": ORG_ID },
   }
 }
 
@@ -72,7 +92,7 @@ export function buildLocalBusinessSchema() {
   return {
     "@context": "https://schema.org",
     "@type": ["LocalBusiness", "HealthAndBeautyBusiness"],
-    "@id": `${SITE_URL}/#localbusiness`,
+    "@id": LOCAL_BUSINESS_ID,
     name: "Liquid Health",
     description: ORGANIZATION.description,
     url: SITE_URL,
@@ -93,9 +113,7 @@ export function buildLocalBusinessSchema() {
     priceRange: "₹810 - ₹5900",
     image: [PRODUCT_IMAGE_URL, ORG_LOGO_URL],
     sameAs: ORGANIZATION.sameAs,
-    parentOrganization: {
-      "@id": `${SITE_URL}/#organization`,
-    },
+    parentOrganization: { "@id": ORG_ID },
   }
 }
 
@@ -170,7 +188,6 @@ export function buildProductSchema(product?: {
       { "@type": "PropertyValue", name: "Botanical Extracts", value: "12" },
       { "@type": "PropertyValue", name: "Certifications", value: "GMP, ISO 9001, FDA Registered, AYUSH Approved, FSSAI Licensed" },
     ],
-    speaksAbout: ORGANIZATION.description,
   }
 }
 
@@ -267,20 +284,11 @@ export function buildArticleSchema(post: {
     datePublished,
     dateModified: post.dateModified ? toIsoDate(post.dateModified) : datePublished,
     image: post.image ? [{ "@id": post.image }] : [`${SITE_URL}/opengraph-image`],
-    author: post.authorName ? {
-      "@type": "Person",
-      name: post.authorName,
-    } : {
-      "@type": "Organization",
-      name: ORGANIZATION.name,
-      url: SITE_URL,
-      "@id": `${SITE_URL}/#organization`,
-    },
-    publisher: {
-      "@id": `${SITE_URL}/#organization`,
-      "@type": "Organization",
-      name: ORGANIZATION.name,
-    },
+    // Organization is defined once by the (shop) layout graph; reference it by @id only.
+    author: post.authorName
+      ? { "@type": "Person", name: post.authorName }
+      : { "@id": ORG_ID },
+    publisher: { "@id": ORG_ID },
     mainEntityOfPage: {
       "@type": "WebPage",
       "@id": `${SITE_URL}/blog/${post.slug}`,
