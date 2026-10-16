@@ -4,7 +4,7 @@ import { SITE_URL, buildFAQSchema, buildBreadcrumbSchema } from "@/lib/seo"
 export const metadata: Metadata = {
   title: "Shipping Policy | PhytoFlex Gold",
   description:
-    "Learn about PhytoFlex Gold shipping options, delivery times, and return policy. Free shipping on orders above Rs. 2,000 across India.",
+    "Learn about PhytoFlex Gold shipping options, delivery times, and return policy. Free shipping on all orders across India.",
   alternates: {
     canonical: `${SITE_URL}/shipping`,
   },
@@ -40,7 +40,7 @@ const faqs = [
   {
     question: "Is there free shipping?",
     answer:
-      "Yes. Orders above Rs. 2,000 qualify for free standard shipping across India. Orders below Rs. 2,000 incur a flat shipping fee of Rs. 99.",
+      "Yes. Free shipping on all orders.",
   },
   {
     question: "Do you ship internationally?",
@@ -87,8 +87,8 @@ export default function ShippingPage() {
           Shipping &amp; Delivery
         </h1>
         <p className="text-body-lg text-on-surface-variant mb-12">
-          Fast, reliable delivery across India with free shipping on orders
-          above Rs. 2,000.
+          Fast, reliable delivery across India with free shipping on all
+          orders.
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-16">
@@ -101,7 +101,7 @@ export default function ShippingPage() {
                 Free Shipping
               </h2>
               <p className="text-body-md text-on-surface-variant">
-                On all orders above Rs. 2,000 across India
+                On all orders across India
               </p>
             </div>
           </div>
@@ -177,18 +177,8 @@ export default function ShippingPage() {
               <tbody>
                 <tr className="border-b border-outline-variant/10">
                   <td className="py-3 px-4 text-body-md text-on-surface">Standard Shipping</td>
-                  <td className="py-3 px-4 text-body-md text-on-surface">Rs. 99 (Free above Rs. 2,000)</td>
+                  <td className="py-3 px-4 text-body-md text-on-surface">Free</td>
                   <td className="py-3 px-4 text-body-md text-on-surface">5–7 business days</td>
-                </tr>
-                <tr className="border-b border-outline-variant/10">
-                  <td className="py-3 px-4 text-body-md text-on-surface">Express Shipping</td>
-                  <td className="py-3 px-4 text-body-md text-on-surface">Rs. 199</td>
-                  <td className="py-3 px-4 text-body-md text-on-surface">2–3 business days</td>
-                </tr>
-                <tr>
-                  <td className="py-3 px-4 text-body-md text-on-surface">Metro Same-Day</td>
-                  <td className="py-3 px-4 text-body-md text-on-surface">Rs. 349</td>
-                  <td className="py-3 px-4 text-body-md text-on-surface">Same day (metro cities only)</td>
                 </tr>
               </tbody>
             </table>
