@@ -28,7 +28,7 @@ export function PricingSection({ product }: PricingSectionProps) {
       "9x PhytoFlex Gold (500ml)",
       "VIP Restoration Coaching",
       "Free Shipping",
-      "Best Value - 35% Off",
+      "Best Value",
     ],
   }
 
@@ -89,7 +89,7 @@ export function PricingSection({ product }: PricingSectionProps) {
                     <p className="text-primary-container font-bold text-sm mt-1">You save Rs. 330 Total</p>
                   )}
                   {tier.label === "3 Month" && (
-                    <p className="text-secondary font-bold text-sm mt-1">Best Value - 35% Off</p>
+                    <p className="text-secondary font-bold text-sm mt-1">Best Value</p>
                   )}
                 </div>
                 <ul className="space-y-4 mb-8 flex-grow" aria-label={`Features included in ${tier.label} supply`}>
