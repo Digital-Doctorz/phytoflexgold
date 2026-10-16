@@ -299,8 +299,9 @@ export function buildArticleSchema(post: {
 /**
  * Homepage WebPage node. Speakable is a property of WebPage/Article (SpeakableSpecification),
  * not a standalone node. Google: use either xpath or cssSelector in one spec, not both.
- * Selectors are anchored on stable ids / aria-labels in HeroSection, ScienceSection and
- * BenefitsSection; they only point at copy, they do not add any.
+ * GATEKEEPER S-1 (2026-10-16): Speakable may only nominate claim-free copy. Hero h1/lede and
+ * #science-heading are excluded until claims REV1 X2/X8a and DQ-1 ship; #benefits-heading
+ * (claims REV1 rewrite row) and #faq-heading ("Clinical ...") are excluded too.
  */
 export function buildHomeWebPageSchema() {
   return {
@@ -313,12 +314,7 @@ export function buildHomeWebPageSchema() {
     inLanguage: "en-IN",
     speakable: {
       "@type": "SpeakableSpecification",
-      xpath: [
-        "//section[@aria-label='Hero']//h1",
-        "(//section[@aria-label='Hero']//p)[1]",
-        "//*[@id='science-heading']",
-        "//*[@id='benefits-heading']",
-      ],
+      xpath: ["//*[@id='ingredients-heading']"],
     },
   }
 }
