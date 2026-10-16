@@ -17,7 +17,7 @@ import {
   buildBreadcrumbSchema,
   buildOrganizationSchema,
   buildLocalBusinessSchema,
-  buildSpeakableSchema,
+  buildHomeWebPageSchema,
 } from "@/lib/seo"
 import { homeFaqs } from "@/lib/faqs"
 import type { Metadata } from "next"
@@ -112,7 +112,7 @@ export default async function HomePage() {
             buildFAQSchema(homepageFaqSchema),
             buildHowToSchema(),
             buildBreadcrumbSchema([{ name: "Home", url: SITE_URL }]),
-            buildSpeakableSchema(),
+            buildHomeWebPageSchema(),
           ]),
         }}
       />

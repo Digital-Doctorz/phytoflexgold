@@ -2,6 +2,13 @@ export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.phytofl
 export const PRODUCT_IMAGE_URL = `${SITE_URL}/product-phytoflex-gold.png`
 export const ORG_LOGO_URL = `${SITE_URL}/opengraph-image`
 
+// Stable JSON-LD node ids. Each entity is defined once per page (site-wide nodes in the
+// (shop) layout) and referenced elsewhere by { "@id": ... } only.
+export const ORG_ID = `${SITE_URL}/#organization`
+export const LOCAL_BUSINESS_ID = `${SITE_URL}/#localbusiness`
+export const WEBSITE_ID = `${SITE_URL}/#website`
+export const HOME_WEBPAGE_ID = `${SITE_URL}/#webpage`
+
 export const ORGANIZATION = {
   name: "Liquid Health",
   legalName: "Liquid Health",
@@ -50,6 +57,7 @@ export function buildWebSiteSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": WEBSITE_ID,
     name: "PhytoFlex Gold",
     description: ORGANIZATION.description,
     url: SITE_URL,
@@ -283,15 +291,29 @@ export function buildArticleSchema(post: {
   }
 }
 
-export function buildSpeakableSchema() {
+/**
+ * Homepage WebPage node. Speakable is a property of WebPage/Article (SpeakableSpecification),
+ * not a standalone node. Google: use either xpath or cssSelector in one spec, not both.
+ * Selectors are anchored on stable ids / aria-labels in HeroSection, ScienceSection and
+ * BenefitsSection; they only point at copy, they do not add any.
+ */
+export function buildHomeWebPageSchema() {
   return {
     "@context": "https://schema.org",
-    "@type": "Speakable",
-    xpath: [
-      "//header/h1",
-      "//section[contains(@aria-label, 'Hero')]/p",
-      "//section[contains(@aria-label, 'ScienceSection')]//p[1]",
-      "//section[contains(@aria-label, 'BenefitsSection')]//p[1]",
-    ]
+    "@type": "WebPage",
+    "@id": HOME_WEBPAGE_ID,
+    url: SITE_URL,
+    isPartOf: { "@id": WEBSITE_ID },
+    about: { "@id": ORG_ID },
+    inLanguage: "en-US",
+    speakable: {
+      "@type": "SpeakableSpecification",
+      xpath: [
+        "//section[@aria-label='Hero']//h1",
+        "(//section[@aria-label='Hero']//p)[1]",
+        "//*[@id='science-heading']",
+        "//*[@id='benefits-heading']",
+      ],
+    },
   }
 }
