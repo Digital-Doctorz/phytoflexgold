@@ -25,13 +25,8 @@ export const ORGANIZATION = {
     postalCode: "700021",
     addressCountry: "IN",
   },
-  sameAs: [
-    "https://www.facebook.com/phytoflexgold",
-    "https://www.instagram.com/phytoflexgold",
-    "https://twitter.com/phytoflexgold",
-    "https://www.youtube.com/@phytoflexgold",
-    "https://www.linkedin.com/company/phytoflexgold",
-  ],
+  // cms_batch_extras #16 (PFG-SOCIAL-SAMEAS-IG, GATEKEEPER 8.6): Instagram only, correct handle.
+  sameAs: ["https://www.instagram.com/phytoflex_gold"],
   contactPoint: {
     "@type": "ContactPoint",
     telephone: "+91-9555955595",
@@ -83,7 +78,7 @@ export function buildWebSiteSchema() {
     name: "PhytoFlex Gold",
     description: ORGANIZATION.description,
     url: SITE_URL,
-    inLanguage: "en-US",
+    inLanguage: "en-IN",
     publisher: { "@id": ORG_ID },
   }
 }
@@ -294,7 +289,7 @@ export function buildArticleSchema(post: {
       "@id": `${SITE_URL}/blog/${post.slug}`,
     },
     articleSection: post.category,
-    inLanguage: "en-US",
+    inLanguage: "en-IN",
     keywords: [post.category, "joint health", "botanical supplement"],
   }
 }
@@ -313,7 +308,7 @@ export function buildHomeWebPageSchema() {
     url: SITE_URL,
     isPartOf: { "@id": WEBSITE_ID },
     about: { "@id": ORG_ID },
-    inLanguage: "en-US",
+    inLanguage: "en-IN",
     speakable: {
       "@type": "SpeakableSpecification",
       xpath: [

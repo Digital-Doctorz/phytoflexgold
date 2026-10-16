@@ -53,7 +53,7 @@ export default function BlogIndex() {
     description:
       "Evidence-based articles on joint health, botanical supplements, and natural wellness protocols.",
     url: `${SITE_URL}/blog`,
-    inLanguage: "en-US",
+    inLanguage: "en-IN",
     publisher: { "@id": ORG_ID },
     blogPost: posts.map((post) => {
       const postData = allPosts[post.slug]
