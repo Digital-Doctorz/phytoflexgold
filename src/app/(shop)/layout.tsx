@@ -1,22 +1,15 @@
 import { CartProvider } from "@/context/CartContext"
 import { ShopHeader } from "@/components/shop/ShopHeader"
 import { ShopFooter } from "@/components/shop/ShopFooter"
-import { buildOrganizationSchema, buildWebSiteSchema, buildLocalBusinessSchema } from "@/lib/seo"
+import { buildSiteGraphSchema } from "@/lib/seo"
 
 export default function ShopLayout({ children }: { children: React.ReactNode }) {
   return (
     <CartProvider>
+      {/* Organization, WebSite and LocalBusiness: defined once here for every (shop) page. */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildOrganizationSchema()) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildWebSiteSchema()) }}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildLocalBusinessSchema()) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(buildSiteGraphSchema()) }}
       />
       <a
         href="#main-content"

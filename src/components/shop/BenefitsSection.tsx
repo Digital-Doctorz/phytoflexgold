@@ -168,10 +168,6 @@ export function BenefitsSection() {
         },
       },
     })),
-    speakable: {
-      "@type": "SpeakableSpecification",
-      cssSelector: ["#benefits-heading"],
-    },
   }
 
   return (

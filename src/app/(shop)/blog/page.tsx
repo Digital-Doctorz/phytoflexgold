@@ -1,6 +1,6 @@
 import Link from "next/link"
 import type { Metadata } from "next"
-import { SITE_URL, buildBreadcrumbSchema, buildArticleSchema } from "@/lib/seo"
+import { SITE_URL, ORG_ID, buildBreadcrumbSchema, buildArticleSchema } from "@/lib/seo"
 import { posts as allPosts } from "./[slug]/data"
 
 export const metadata: Metadata = {
@@ -53,8 +53,8 @@ export default function BlogIndex() {
     description:
       "Evidence-based articles on joint health, botanical supplements, and natural wellness protocols.",
     url: `${SITE_URL}/blog`,
-    inLanguage: "en-US",
-    publisher: { "@id": `${SITE_URL}/#organization` },
+    inLanguage: "en-IN",
+    publisher: { "@id": ORG_ID },
     blogPost: posts.map((post) => {
       const postData = allPosts[post.slug]
       return buildArticleSchema({

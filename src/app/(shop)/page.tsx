@@ -15,9 +15,7 @@ import {
   buildFAQSchema,
   buildHowToSchema,
   buildBreadcrumbSchema,
-  buildOrganizationSchema,
-  buildLocalBusinessSchema,
-  buildSpeakableSchema,
+  buildHomeWebPageSchema,
 } from "@/lib/seo"
 import { homeFaqs } from "@/lib/faqs"
 import type { Metadata } from "next"
@@ -106,13 +104,11 @@ export default async function HomePage() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{
           __html: JSON.stringify([
-            buildOrganizationSchema(),
-            buildLocalBusinessSchema(),
             buildProductSchema(product),
             buildFAQSchema(homepageFaqSchema),
             buildHowToSchema(),
             buildBreadcrumbSchema([{ name: "Home", url: SITE_URL }]),
-            buildSpeakableSchema(),
+            buildHomeWebPageSchema(),
           ]),
         }}
       />

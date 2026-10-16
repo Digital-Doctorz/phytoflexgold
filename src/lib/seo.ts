@@ -2,8 +2,17 @@ export const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || "https://www.phytofl
 export const PRODUCT_IMAGE_URL = `${SITE_URL}/product-phytoflex-gold.png`
 export const ORG_LOGO_URL = `${SITE_URL}/opengraph-image`
 
+// Stable JSON-LD node ids. Each entity is defined once per page (site-wide nodes in the
+// (shop) layout) and referenced elsewhere by { "@id": ... } only.
+export const ORG_ID = `${SITE_URL}/#organization`
+export const LOCAL_BUSINESS_ID = `${SITE_URL}/#localbusiness`
+export const WEBSITE_ID = `${SITE_URL}/#website`
+export const HOME_WEBPAGE_ID = `${SITE_URL}/#webpage`
+
 export const ORGANIZATION = {
-  name: "Liquid Health",
+  // X17a (claims REV1, GATEKEEPER 8.3) per DD 6 Oct: brand name everywhere; the legal name
+  // 'Liquid Health' only in legalName, Product.manufacturer and the footer/legal line.
+  name: "PhytoFlex Gold",
   legalName: "Liquid Health",
   url: SITE_URL,
   logo: ORG_LOGO_URL,
@@ -18,13 +27,8 @@ export const ORGANIZATION = {
     postalCode: "700021",
     addressCountry: "IN",
   },
-  sameAs: [
-    "https://www.facebook.com/phytoflexgold",
-    "https://www.instagram.com/phytoflexgold",
-    "https://twitter.com/phytoflexgold",
-    "https://www.youtube.com/@phytoflexgold",
-    "https://www.linkedin.com/company/phytoflexgold",
-  ],
+  // cms_batch_extras #16 (PFG-SOCIAL-SAMEAS-IG, GATEKEEPER 8.6): Instagram only, correct handle.
+  sameAs: ["https://www.instagram.com/phytoflex_gold"],
   contactPoint: {
     "@type": "ContactPoint",
     telephone: "+91-9555955595",
@@ -36,13 +40,35 @@ export const ORGANIZATION = {
 } as const
 
 export function buildOrganizationSchema() {
+  const { phone, ...org } = ORGANIZATION
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
-    "@id": `${SITE_URL}/#organization`,
-    ...ORGANIZATION,
+    "@id": ORG_ID,
+    ...org,
+    telephone: phone,
     logo: ORG_LOGO_URL,
     image: [PRODUCT_IMAGE_URL, ORG_LOGO_URL],
+  }
+}
+
+/**
+ * Site-wide entities, emitted ONCE per page by the (shop) layout as a single @graph.
+ * Pages must not re-emit Organization / WebSite / LocalBusiness; reference them by @id.
+ */
+export function buildSiteGraphSchema() {
+  const strip = <T extends { "@context"?: string }>(node: T) => {
+    const { "@context": _ctx, ...rest } = node
+    void _ctx
+    return rest
+  }
+  return {
+    "@context": "https://schema.org",
+    "@graph": [
+      strip(buildOrganizationSchema()),
+      strip(buildWebSiteSchema()),
+      strip(buildLocalBusinessSchema()),
+    ],
   }
 }
 
@@ -50,13 +76,12 @@ export function buildWebSiteSchema() {
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
+    "@id": WEBSITE_ID,
     name: "PhytoFlex Gold",
     description: ORGANIZATION.description,
     url: SITE_URL,
-    inLanguage: "en-US",
-    publisher: {
-      "@id": `${SITE_URL}/#organization`,
-    },
+    inLanguage: "en-IN",
+    publisher: { "@id": ORG_ID },
   }
 }
 
@@ -64,18 +89,13 @@ export function buildLocalBusinessSchema() {
   return {
     "@context": "https://schema.org",
     "@type": ["LocalBusiness", "HealthAndBeautyBusiness"],
-    "@id": `${SITE_URL}/#localbusiness`,
-    name: "Liquid Health",
+    "@id": LOCAL_BUSINESS_ID,
+    name: ORGANIZATION.name,
     description: ORGANIZATION.description,
     url: SITE_URL,
     telephone: ORGANIZATION.phone,
     email: ORGANIZATION.email,
     address: ORGANIZATION.address,
-    geo: {
-      "@type": "GeoCoordinates",
-      latitude: 22.5726,
-      longitude: 88.3639,
-    },
     openingHoursSpecification: {
       "@type": "OpeningHoursSpecification",
       dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
@@ -85,9 +105,7 @@ export function buildLocalBusinessSchema() {
     priceRange: "₹810 - ₹5900",
     image: [PRODUCT_IMAGE_URL, ORG_LOGO_URL],
     sameAs: ORGANIZATION.sameAs,
-    parentOrganization: {
-      "@id": `${SITE_URL}/#organization`,
-    },
+    parentOrganization: { "@id": ORG_ID },
   }
 }
 
@@ -126,7 +144,7 @@ export function buildProductSchema(product?: {
     image: [image],
     url: `${SITE_URL}/#pricing`,
     sku: "PFG-500ML",
-    brand: { "@type": "Brand", name: ORGANIZATION.name },
+    brand: { "@type": "Brand", name: "PhytoFlex Gold" },
     manufacturer: { "@type": "Organization", name: ORGANIZATION.legalName },
     category: "Joint Health Supplements",
     offers: {
@@ -139,22 +157,6 @@ export function buildProductSchema(product?: {
       offerCount: offers.length,
       offers,
     },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.8",
-      bestRating: "5",
-      reviewCount: "2400",
-      ratingCount: "2400",
-    },
-    review: [
-      {
-        "@type": "Review",
-        reviewRating: { "@type": "Rating", ratingValue: "5", bestRating: "5" },
-        author: { "@type": "Person", name: "Verified Customer" },
-        reviewBody: "Significant improvement in joint mobility and reduction in morning stiffness within 3 weeks of use.",
-        datePublished: "2026-08-01",
-      },
-    ],
     additionalProperty: [
       { "@type": "PropertyValue", name: "Volume", value: "500ml" },
       { "@type": "PropertyValue", name: "Purity", value: "98.2% HPLC" },
@@ -162,7 +164,6 @@ export function buildProductSchema(product?: {
       { "@type": "PropertyValue", name: "Botanical Extracts", value: "12" },
       { "@type": "PropertyValue", name: "Certifications", value: "GMP, ISO 9001, FDA Registered, AYUSH Approved, FSSAI Licensed" },
     ],
-    speaksAbout: ORGANIZATION.description,
   }
 }
 
@@ -259,39 +260,40 @@ export function buildArticleSchema(post: {
     datePublished,
     dateModified: post.dateModified ? toIsoDate(post.dateModified) : datePublished,
     image: post.image ? [{ "@id": post.image }] : [`${SITE_URL}/opengraph-image`],
-    author: post.authorName ? {
-      "@type": "Person",
-      name: post.authorName,
-    } : {
-      "@type": "Organization",
-      name: ORGANIZATION.name,
-      url: SITE_URL,
-      "@id": `${SITE_URL}/#organization`,
-    },
-    publisher: {
-      "@id": `${SITE_URL}/#organization`,
-      "@type": "Organization",
-      name: ORGANIZATION.name,
-    },
+    // Organization is defined once by the (shop) layout graph; reference it by @id only.
+    author: post.authorName
+      ? { "@type": "Person", name: post.authorName }
+      : { "@id": ORG_ID },
+    publisher: { "@id": ORG_ID },
     mainEntityOfPage: {
       "@type": "WebPage",
       "@id": `${SITE_URL}/blog/${post.slug}`,
     },
     articleSection: post.category,
-    inLanguage: "en-US",
+    inLanguage: "en-IN",
     keywords: [post.category, "joint health", "botanical supplement"],
   }
 }
 
-export function buildSpeakableSchema() {
+/**
+ * Homepage WebPage node. Speakable is a property of WebPage/Article (SpeakableSpecification),
+ * not a standalone node. Google: use either xpath or cssSelector in one spec, not both.
+ * GATEKEEPER S-1 (2026-10-16): Speakable may only nominate claim-free copy. Hero h1/lede and
+ * #science-heading are excluded until claims REV1 X2/X8a and DQ-1 ship; #benefits-heading
+ * (claims REV1 rewrite row) and #faq-heading ("Clinical ...") are excluded too.
+ */
+export function buildHomeWebPageSchema() {
   return {
     "@context": "https://schema.org",
-    "@type": "Speakable",
-    xpath: [
-      "//header/h1",
-      "//section[contains(@aria-label, 'Hero')]/p",
-      "//section[contains(@aria-label, 'ScienceSection')]//p[1]",
-      "//section[contains(@aria-label, 'BenefitsSection')]//p[1]",
-    ]
+    "@type": "WebPage",
+    "@id": HOME_WEBPAGE_ID,
+    url: SITE_URL,
+    isPartOf: { "@id": WEBSITE_ID },
+    about: { "@id": ORG_ID },
+    inLanguage: "en-IN",
+    speakable: {
+      "@type": "SpeakableSpecification",
+      xpath: ["//*[@id='ingredients-heading']"],
+    },
   }
 }
