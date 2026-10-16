@@ -10,7 +10,9 @@ export const WEBSITE_ID = `${SITE_URL}/#website`
 export const HOME_WEBPAGE_ID = `${SITE_URL}/#webpage`
 
 export const ORGANIZATION = {
-  name: "Liquid Health",
+  // X17a (claims REV1, GATEKEEPER 8.3) per DD 6 Oct: brand name everywhere; the legal name
+  // 'Liquid Health' only in legalName, Product.manufacturer and the footer/legal line.
+  name: "PhytoFlex Gold",
   legalName: "Liquid Health",
   url: SITE_URL,
   logo: ORG_LOGO_URL,
@@ -88,7 +90,7 @@ export function buildLocalBusinessSchema() {
     "@context": "https://schema.org",
     "@type": ["LocalBusiness", "HealthAndBeautyBusiness"],
     "@id": LOCAL_BUSINESS_ID,
-    name: "Liquid Health",
+    name: ORGANIZATION.name,
     description: ORGANIZATION.description,
     url: SITE_URL,
     telephone: ORGANIZATION.phone,
@@ -147,7 +149,7 @@ export function buildProductSchema(product?: {
     image: [image],
     url: `${SITE_URL}/#pricing`,
     sku: "PFG-500ML",
-    brand: { "@type": "Brand", name: ORGANIZATION.name },
+    brand: { "@type": "Brand", name: "PhytoFlex Gold" },
     manufacturer: { "@type": "Organization", name: ORGANIZATION.legalName },
     category: "Joint Health Supplements",
     offers: {
