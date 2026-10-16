@@ -1,7 +1,7 @@
 "use client"
 
 import Image from "next/image"
-import { ShoppingCart, PlayCircle, Star } from "lucide-react"
+import { ShoppingCart, PlayCircle } from "lucide-react"
 
 export function HeroSection() {
   return (
@@ -34,16 +34,6 @@ export function HeroSection() {
             >
               Watch Science <PlayCircle className="w-5 h-5" aria-hidden="true" />
             </a>
-          </div>
-          <div className="mt-8 flex items-center gap-3 sm:gap-4 text-on-surface-variant">
-            <div className="flex items-center gap-1" aria-hidden="true">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <Star key={i} className="w-4 h-4 fill-secondary text-secondary" />
-              ))}
-            </div>
-            <p className="text-xs sm:text-label-md font-semibold product-name">
-              Rated 4.8/5 by 2,400+ customers · Trusted by 24,000+ High-Performance Individuals
-            </p>
           </div>
         </div>
         <div className="relative order-1 md:order-2 flex justify-center items-center">

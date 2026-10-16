@@ -157,22 +157,6 @@ export function buildProductSchema(product?: {
       offerCount: offers.length,
       offers,
     },
-    aggregateRating: {
-      "@type": "AggregateRating",
-      ratingValue: "4.8",
-      bestRating: "5",
-      reviewCount: "2400",
-      ratingCount: "2400",
-    },
-    review: [
-      {
-        "@type": "Review",
-        reviewRating: { "@type": "Rating", ratingValue: "5", bestRating: "5" },
-        author: { "@type": "Person", name: "Verified Customer" },
-        reviewBody: "Significant improvement in joint mobility and reduction in morning stiffness within 3 weeks of use.",
-        datePublished: "2026-08-01",
-      },
-    ],
     additionalProperty: [
       { "@type": "PropertyValue", name: "Volume", value: "500ml" },
       { "@type": "PropertyValue", name: "Purity", value: "98.2% HPLC" },
