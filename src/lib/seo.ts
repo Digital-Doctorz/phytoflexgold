@@ -115,7 +115,7 @@ export function buildProductSchema(product?: {
     : [
         { "@type": "Offer" as const, name: "10 Days Supply", price: 810, priceCurrency: "INR", availability: "https://schema.org/InStock", itemCondition: "https://schema.org/NewCondition", description: "1x PhytoFlex Gold (500ml) - 10 Days Dosage" },
         { "@type": "Offer" as const, name: "1 Month Supply", price: 2100, priceCurrency: "INR", availability: "https://schema.org/InStock", itemCondition: "https://schema.org/NewCondition", description: "3x PhytoFlex Gold (500ml) - Advanced Biomarker Tracking - Priority Clinical Support - FREE Delivery" },
-        { "@type": "Offer" as const, name: "3 Month Supply", price: 5900, priceCurrency: "INR", availability: "https://schema.org/InStock", itemCondition: "https://schema.org/NewCondition", description: "9x PhytoFlex Gold (500ml) - VIP Restoration Coaching - Free Global Shipping - Best Value 35% Off" },
+        { "@type": "Offer" as const, name: "3 Month Supply", price: 5900, priceCurrency: "INR", availability: "https://schema.org/InStock", itemCondition: "https://schema.org/NewCondition", description: "9x PhytoFlex Gold (500ml) - VIP Restoration Coaching - Free Shipping Across India" },
       ]
 
   return {
