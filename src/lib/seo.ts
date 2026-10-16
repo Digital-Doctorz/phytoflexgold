@@ -96,11 +96,6 @@ export function buildLocalBusinessSchema() {
     telephone: ORGANIZATION.phone,
     email: ORGANIZATION.email,
     address: ORGANIZATION.address,
-    geo: {
-      "@type": "GeoCoordinates",
-      latitude: 22.5726,
-      longitude: 88.3639,
-    },
     openingHoursSpecification: {
       "@type": "OpeningHoursSpecification",
       dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
