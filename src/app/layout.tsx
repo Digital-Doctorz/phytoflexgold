@@ -85,7 +85,7 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en-IN" className="dark">
       <head>
         <meta name="theme-color" content="#121414" />
         <meta name="msapplication-TileColor" content="#121414" />
